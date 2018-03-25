@@ -3,12 +3,14 @@ package View;
 import Model.CoinButton;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class Tablier extends JFrame {
+public class Tablier extends JFrame implements ActionListener {
     private CoinButton cb1 = new CoinButton("BD");
     private CoinButton cb2 = new CoinButton("BG");
     private CoinButton cb3 = new CoinButton("HD");
@@ -18,6 +20,10 @@ public class Tablier extends JFrame {
         this.setSize(300, 300);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
+        cb1.addActionListener(this);
+        cb2.addActionListener(this);
+        cb3.addActionListener(this);
+        cb4.addActionListener(this);
         //On définit le layout à utiliser sur le content pane
         //Trois lignes sur deux colonnes
         this.setLayout(new GridLayout(2, 2));
@@ -35,5 +41,13 @@ public class Tablier extends JFrame {
 
     public static void main(String args[]) {
         new Tablier();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source instanceof CoinButton) {
+            ((CoinButton)source).setColor("red");
+        }
     }
 }
