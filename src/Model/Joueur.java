@@ -1,3 +1,5 @@
+package Model;
+
 public class Joueur
 {
     private final int INIT_TWIST_LOCK = 20;

@@ -1,6 +1,12 @@
+package Controler;
+
+import Model.Coin;
+import Model.Container;
+import Model.Joueur;
+
 import java.util.Scanner;
 
-public class Partie
+public class PartieConsole
 {
     private Container[][] tabContainer;
     private Coin[][] tabCoin;
@@ -13,7 +19,7 @@ public class Partie
 
     private Joueur joueurActif;
 
-    public Partie(int nbLig, int nbCol, Joueur joueur1, Joueur joueur2)
+    public PartieConsole(int nbLig, int nbCol, Joueur joueur1, Joueur joueur2)
     {
         this.nbLig = nbLig;
         this.nbCol = nbCol;
@@ -44,7 +50,7 @@ public class Partie
                 this.tabContainer[i][j].addCoin(this.tabCoin[i+1][j+1]); //Bas droite
             }
         }
-        //Remplissage du tableau de Coin de chaque Container (moins compliqué que ce que je pensais)
+        //Remplissage du tableau de Model.Coin de chaque Model.Container (moins compliqué que ce que je pensais)
 
         System.out.println("==============================================");
         System.out.println("             Début de partie !");
@@ -194,7 +200,7 @@ public class Partie
 
     public static void main(String[] args)
     {
-        new Partie(10, 7, new Joueur("Rouge", "\033[31m"), new Joueur("Vert", "\033[32m"));
+        new PartieConsole(10, 7, new Joueur("Rouge", "\033[31m"), new Joueur("Vert", "\033[32m"));
         System.out.println(getRouge() + "Hello World !" + getBase() + " Coucou le monde !");
     }
 }

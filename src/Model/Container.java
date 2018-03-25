@@ -1,3 +1,5 @@
+package Model;
+
 public class Container
 {
     private int valeur; //Aléatoire entre 5 et 54
