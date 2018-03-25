@@ -21,6 +21,7 @@ public class CoinButton extends JButton {
         }
         this.setIcon(new ImageIcon(i));
         this.setMargin(new Insets(0, 0, 0, 0));
+        this.setBorder(null);
     }
 
     public void setColor( String color )
