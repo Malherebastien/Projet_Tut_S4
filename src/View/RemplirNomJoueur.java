@@ -9,9 +9,9 @@ public class RemplirNomJoueur
 {
 	public RemplirNomJoueur(int nb)
 	{
-		ArrayList <Joueur> lJoueur = new ArrayList<>();
-
-		for ( int i = 1; i <= nb; i ++)
+		Joueur [] tabJoueur = new Joueur[nb];
+		String message = "";
+		for ( int i = 0; i < nb; i ++)
 		{
 			String nom;
 			do{
@@ -24,10 +24,10 @@ public class RemplirNomJoueur
 			}
 			while(true);
 			Joueur j = new Joueur(nom,nom);
-			lJoueur.add(j);
-			JOptionPane.showMessageDialog( null, j.getCouleur() + " à été créé !");
+			tabJoueur[i] = j;
+			message += tabJoueur[i].getCouleur() + ",\n";
 		}
-
+		JOptionPane.showMessageDialog( null, message + "ont été créés avec succès!");
 	}
 
 }
