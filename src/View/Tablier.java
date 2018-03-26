@@ -45,7 +45,7 @@ public class Tablier extends JFrame {
                     System.out.println("Bord rouge au container " + numPanel + " et au bord " + bord);
                     switch (bord) {
                         case 1:
-                            if (numPanel > 6) {
+                            if ( numPanel > 6 ) {
                                 arrayCP.get(numPanel - 7).getCoinButton(3).setColor("red");
                                 if ( numPanel % 7 != 0)
                                 {
