@@ -57,7 +57,7 @@ public class Tablier extends JFrame {
 
         new Tablier(j);
     }
-
+    //
     public static void actualiserIHM()
     {
         for ( int numPanel = 0 ; numPanel < arrayCP.size() ; numPanel++ )
