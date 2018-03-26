@@ -28,6 +28,8 @@ public class RemplirNomJoueur
 			message += tabJoueur[i].getCouleur() + ",\n";
 		}
 		JOptionPane.showMessageDialog( null, message + "ont été créés avec succès!");
+
+		new Tablier(tabJoueur);
 	}
 
 }
