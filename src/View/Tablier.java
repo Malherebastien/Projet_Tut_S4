@@ -2,6 +2,7 @@ package View;
 
 import Model.CoinButton;
 import Model.ContainerJPanel;
+import Model.Joueur;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,27 +12,50 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 public class Tablier extends JFrame {
     public static CoinButton tableauCoinButton[];
     private static ArrayList<ContainerJPanel> arrayCP = new ArrayList<ContainerJPanel>();
-    public Tablier() {
+    public Tablier(Joueur[] joueur) {
         this.setTitle("Bouton");
         this.setSize(400, 300);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setLayout(new GridLayout(10,7));
+        this.setLayout(new FlowLayout());
+        JPanel grille = new JPanel(new GridLayout(10,7));
 
         for ( int i = 0 ; i < 70 ; i++ ) {
             ContainerJPanel cP = new ContainerJPanel();
             arrayCP.add(cP);
-            this.getContentPane().add(cP);
+            grille.add(cP);
         }
+
+        Color[] color = {Color.red, Color.green, Color.blue, Color.yellow};
+
+        for(int i = 0; i < joueur.length; i++) {
+            JPanel pan = new JPanel(new BorderLayout());
+            pan.add(new JLabel(new ImageIcon("im" + i + ".png")), BorderLayout.NORTH);
+            JLabel nbCoups = new JLabel("Joueur " + i + " : " + joueur[i].getScore() + ", il lui reste " + joueur[i].getNbTwistLock());
+            pan.add(nbCoups, BorderLayout.SOUTH);
+            add(pan);
+        }
+
+        add(grille);
+
         this.setVisible(true);
         this.pack();
     }
 
     public static void main(String args[]) {
-        new Tablier();
+        Joueur[] j = new Joueur[4];
+
+        j[0] = new Joueur("red", "#f00");
+        j[1] = new Joueur("green", "#0f0");
+        j[2] = new Joueur("blue", "#00f");
+        j[3] = new Joueur("yellow", "#ff0");
+
+
+        new Tablier(j);
     }
 
     public static void actualiserIHM()
