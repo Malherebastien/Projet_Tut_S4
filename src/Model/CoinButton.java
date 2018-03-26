@@ -44,7 +44,6 @@ public class CoinButton extends JButton {
             break;
         }
     }
-
     public void resetColor()
     {
         try
