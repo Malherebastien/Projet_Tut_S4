@@ -1,5 +1,7 @@
 package Model;
 
+import View.Tablier;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,7 +28,7 @@ public class ContainerJPanel extends JPanel implements ActionListener {
     {
         try
         {
-            return this.alCoinButton.get(id);
+            return this.alCoinButton.get(id-1);
         }
         catch (NullPointerException npe)
         {
@@ -41,5 +43,6 @@ public class ContainerJPanel extends JPanel implements ActionListener {
         if (source instanceof CoinButton) {
             ((CoinButton)source).setColor("red");
         }
+        Tablier.actualiserIHM();
     }
 }
