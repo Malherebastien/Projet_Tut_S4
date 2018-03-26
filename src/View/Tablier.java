@@ -87,14 +87,14 @@ public class Tablier extends JFrame {
                             }
                             break;
                         case 4:
-                            if (numPanel < 63) {
+                            if ( numPanel < 63 ) {
                                 if ( numPanel % 7 != 6) {
                                     arrayCP.get( numPanel + 1).getCoinButton(3).setColor("red");
                                     arrayCP.get(numPanel + 8).getCoinButton(1).setColor("red");
                                 }
                                 arrayCP.get( numPanel + 7).getCoinButton(2).setColor("red");
                             }
-                            else if ( numPanel != 63 )
+                            else if ( numPanel != 69 )
                             {
                                 arrayCP.get(numPanel + 1).getCoinButton(3).setColor("red");
                             }
