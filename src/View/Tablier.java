@@ -51,7 +51,7 @@ public class Tablier extends JFrame {
                                 {
                                     arrayCP.get( numPanel - 8).getCoinButton(4).setColor("red");
                                     arrayCP.get( numPanel - 1).getCoinButton(2).setColor("red");
-                                }
+                                }//
                             }
                             else if ( numPanel != 0 )
                             {
