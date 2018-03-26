@@ -25,7 +25,6 @@ public class CoinButton extends JButton {
         this.setBorder(null);
         this.color = "default";
     }
-//
     public void setColor( String color )
     {
         switch ( color )
