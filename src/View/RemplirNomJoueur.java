@@ -16,7 +16,7 @@ public class RemplirNomJoueur
 			String nom;
 			do{
 				//Boite de dialogue qui demande a changer le nom du joueur
-				nom = (String) JOptionPane.showInputDialog( null, "Modifier nom du joueur " + i, "Nom du Joueur" );
+				nom = (String) JOptionPane.showInputDialog( null, "Modifier couleur du joueur " + i, "Couleur du Joueur" );
 				if( nom != null )
 				{
 					break;
