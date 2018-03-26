@@ -24,8 +24,11 @@ public class SelectionJoueur {
 			}
 		}
 		while(true);
+
+
 		//if ( s.equals("2")) new PartieIHM(10, 7, new Joueur("Rouge", "\033[31m"), new Joueur("Vert", "\033[32m"));
-		new Tablier();
+		int nbJoueur = Integer.parseInt(s);
+		new RemplirNomJoueur(nbJoueur);
     }
 
     public static void main(String args[]) {
