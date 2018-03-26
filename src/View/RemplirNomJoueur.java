@@ -3,7 +3,6 @@ package View;
 import Model.Joueur;
 
 import javax.swing.*;
-import java.util.ArrayList;
 
 public class RemplirNomJoueur
 {
@@ -19,6 +18,7 @@ public class RemplirNomJoueur
 				nom = (String) JOptionPane.showInputDialog( null, "Modifier couleur du joueur " + i, "Couleur du Joueur" );
 				if( nom != null )
 				{
+					nom = nom.toUpperCase();
 					break;
 				}
 			}
