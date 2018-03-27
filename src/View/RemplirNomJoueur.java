@@ -25,16 +25,15 @@ public class RemplirNomJoueur
 		for ( int i = 0; i < nb; i ++)
 		{
 			String nom;
-			do{
-				//Boite de dialogue qui demande a changer le nom du joueur
-				nom = (String) JOptionPane.showInputDialog( null, "Modifier nom du joueur " + (i+1), "Nom du Joueur" );
-				if( nom != null )
-				{
-					nom = nom.toUpperCase();
-					break;
-				}
+
+			//Boite de dialogue qui demande a changer le nom du joueur
+			nom = (String) JOptionPane.showInputDialog( null, "Modifier nom du joueur " + i, "Nom du Joueur" );
+			if( nom == null )
+			{
+				System.exit(0);
 			}
-			while(true);
+			nom = nom.toUpperCase();
+
 			Joueur j = new Joueur(tabCouleur[i],tabCodeCouleur[i]);
 			j.setNom(nom);
 			tabJoueur[i] = j;
