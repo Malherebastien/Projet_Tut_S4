@@ -17,8 +17,8 @@ import javax.swing.border.TitledBorder;
 public class Tablier extends JFrame {
     public static CoinButton tableauCoinButton[];
     private static ArrayList<ContainerJPanel> arrayCP = new ArrayList<ContainerJPanel>();
-    private JPanel panCoups;
-    private JLabel scoreJoueur;
+    private JPanel[] panCoups;
+    private JLabel[] scoreJoueur;
     private Joueur[] joueur;
     public Tablier(Joueur[] joueur) {
         this.setTitle("Bouton");
@@ -30,21 +30,30 @@ public class Tablier extends JFrame {
         this.joueur = joueur;
 
         for ( int i = 0 ; i < 70 ; i++ ) {
-            ContainerJPanel cP = new ContainerJPanel();
+            ContainerJPanel cP = new ContainerJPanel(this);
             arrayCP.add(cP);
             grille.add(cP);
         }
 
+        panCoups = new JPanel[joueur.length];
+        scoreJoueur = new JLabel[joueur.length];
+
         for(int i = 0; i < joueur.length; i++) {
             JPanel pan = new JPanel(new BorderLayout());
-            pan.add(new JLabel(new ImageIcon("im" + i + ".png")), BorderLayout.NORTH);
-            scoreJoueur = new JLabel(joueur[i].getNom() + " : " + joueur[i].getScore());
-            pan.add(scoreJoueur, BorderLayout.CENTER);
-            panCoups = new JPanel(new GridLayout(2,10));
-            for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
-                panCoups.add(new JLabel("*"));
+            JLabel jlab = new JLabel();
+            try {
+                jlab.setIcon(new ImageIcon(ImageIO.read(new File("src/Images/imgJoueur" + (i+1) +".png"))));
+            } catch (IOException e) {
+                System.out.println("Chemin de l'image incorrect");
             }
-            pan.add(panCoups, BorderLayout.SOUTH);
+            pan.add(jlab, BorderLayout.NORTH);
+            scoreJoueur[i] = new JLabel(joueur[i].getNom() + " : " + joueur[i].getScore());
+            pan.add(scoreJoueur[i], BorderLayout.CENTER);
+            panCoups[i] = new JPanel(new GridLayout(2,10));
+            for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
+                panCoups[i].add(new JLabel("*"));
+            }
+            pan.add(panCoups[i], BorderLayout.SOUTH);
             pan.setBorder(BorderFactory.createLoweredBevelBorder());
             add(pan);
         }
@@ -69,16 +78,16 @@ public class Tablier extends JFrame {
 
     public void actualiserScore() {
         for(int i = 0; i < joueur.length; i++) {
-            scoreJoueur = new JLabel(joueur[i].getNom() + " : " + joueur[i].getScore());
-            panCoups = new JPanel(new GridLayout(2,10));
+            scoreJoueur[i].setText(joueur[i].getNom() + " , " + joueur[i].getScore());
+            panCoups[i].removeAll();
             for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
-                panCoups.add(new JLabel("*"));
+                panCoups[i].add(new JLabel("*"));
             }
         }
     }
 
     //t
-    public static void colorerRond()
+    public void colorerRond()
     {
         for ( int numPanel = 0 ; numPanel < arrayCP.size() ; numPanel++ )
         {
