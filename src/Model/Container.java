@@ -43,19 +43,20 @@ public class Container
 
     public String toString1()
     {
-        return this.coins[0].toString() + "----" + this.coins[1].toString();
+        return "----" + this.coins[1].toString();
     }
 
     public String toString2()
     {
         if (proprietaire != null)
-            return "| " + this.proprietaire.getCodeCouleur() + String.format("%2d",this.valeur) + this.proprietaire.getBase() + " |";
-        return "| " + String.format("%2d",this.valeur) + " |";
+            return " " + this.proprietaire.getCodeCouleur() + String.format("%2d",this.valeur) + this.proprietaire.getBase() + " |";
+
+        return " " + String.format("%2d",this.valeur) + " |";
     }
 
     public String toString3()
     {
-        return this.coins[2].toString() + "----" + this.coins[3].toString();
+        return "----" + this.coins[3].toString();
     }
 
     public int getValeur()

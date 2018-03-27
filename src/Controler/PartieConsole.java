@@ -54,8 +54,8 @@ public class PartieConsole
             {
                 this.tabContainer[i][j].addCoin(this.tabCoin[i][j]); //Haut gauche
                 this.tabContainer[i][j].addCoin(this.tabCoin[i][j+1]); //Haut droite
-                this.tabContainer[i][j].addCoin(this.tabCoin[i+1][j]); //Bas gauche
                 this.tabContainer[i][j].addCoin(this.tabCoin[i+1][j+1]); //Bas droite
+                this.tabContainer[i][j].addCoin(this.tabCoin[i+1][j]); // Bas gauche
             }
         }
         //Remplissage du tableau de Model.Coin de chaque Model.Container (moins compliqué que ce que je pensais)
@@ -140,35 +140,39 @@ public class PartieConsole
     {
         String sRet = "";
 
-        sRet += "    " + "  A   " + "  B   " + "  C   " + "  D   " + "  E   " + "  F   " + "  G   \n";
+        sRet += "    ";
+
+        char col = 'A';
+        while(col <= 64+nbCol) sRet += "  " + col++ + "  ";
+
+        sRet +="\n";
 
         for (int i = 0; i < nbLig; i++)
         {
-            sRet += "   " + this.tabContainer[i][0].toString1();
-            sRet += this.tabContainer[i][1].toString1();
-            sRet += this.tabContainer[i][2].toString1();
-            sRet += this.tabContainer[i][3].toString1();
-            sRet += this.tabContainer[i][4].toString1();
-            sRet += this.tabContainer[i][5].toString1();
-            sRet += this.tabContainer[i][6].toString1() + "\n";
+            sRet += "   " + this.tabContainer[i][0].getCoins()[0];
+
+            for (int j = 0 ; j < nbCol ; j++)
+                sRet += this.tabContainer[i][j].toString1();
+
+            sRet += "\n";
 
 
-            sRet += String.format("%2s",(1 + i));
-            sRet += " " + this.tabContainer[i][0].toString2();
-            sRet += this.tabContainer[i][1].toString2();
-            sRet += this.tabContainer[i][2].toString2();
-            sRet += this.tabContainer[i][3].toString2();
-            sRet += this.tabContainer[i][4].toString2();
-            sRet += this.tabContainer[i][5].toString2();
-            sRet += this.tabContainer[i][6].toString2() + "\n";
+            sRet += String.format("%2s",(1 + i)) + " |";
 
-            sRet += "   " + this.tabContainer[i][0].toString3();
-            sRet += this.tabContainer[i][1].toString3();
-            sRet += this.tabContainer[i][2].toString3();
-            sRet += this.tabContainer[i][3].toString3();
-            sRet += this.tabContainer[i][4].toString3();
-            sRet += this.tabContainer[i][5].toString3();
-            sRet += this.tabContainer[i][6].toString3() + "\n";
+            for (int j = 0 ; j < nbCol ; j++)
+                sRet += this.tabContainer[i][j].toString2();
+
+            sRet += "\n";
+
+            if (i == nbLig-1)
+            {
+                sRet += "   " + this.tabContainer[i][0].getCoins()[2];
+
+                for (int j = 0 ; j < nbCol ; j++)
+                    sRet += this.tabContainer[i][j].toString3();
+
+                sRet += "\n";
+            }
         }
 
         return sRet;
@@ -219,6 +223,6 @@ public class PartieConsole
 
     public static void main(String[] args)
     {
-        new PartieConsole(10, 7, 4);
+        new PartieConsole(10, 10, 4);
     }
 }
