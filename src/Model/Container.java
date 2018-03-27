@@ -3,7 +3,6 @@ package Model;
 import Controler.PartieConsole;
 
 import java.util.HashMap;
-import java.util.HashMap;
 
 public class Container
 {
@@ -80,7 +79,7 @@ public class Container
 
         HashMap<Joueur, Integer> mapJoueur = new HashMap<>();
 
-        for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
+        for (int i = 0; i < PartieConsole.joueurs.length ; i++)
             mapJoueur.put(PartieConsole.joueurs[i], 0);
 
         for (int i = 0; i < coins.length; i++)
