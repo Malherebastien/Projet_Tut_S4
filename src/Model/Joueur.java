@@ -14,7 +14,7 @@ public class Joueur
     public Joueur(String couleur, String codeCouleur)
     {
         this.nbTwistLock = INIT_TWIST_LOCK;
-        this.score = score;
+        this.score = 0;
         this.couleur = couleur;
         this.codeCouleur = codeCouleur;
         this.nom = "";

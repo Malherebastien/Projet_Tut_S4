@@ -73,40 +73,52 @@ public class PartieConsole
                     getBase() + "!\nIl lui reste " +
                     this.joueurActif.getNbTwistLock() + " TwistLocks !");
 
-            System.out.println(afficherTableauContainer());
-
-            String choix;
-            do
+            if (this.joueurActif.getNbTwistLock() != 0)
             {
-                System.out.println("Choisissez ligne + colonne (genre 9B)");
-                choix = sc.nextLine();
-            } while (choix.length() != 2); //TODO Faire meilleur vérif.
+                System.out.println(afficherTableauContainer());
 
-            String coin;
-            do
-            {
-                System.out.println("Choisissez l'un des quatres coins (1 à 4)");
-                coin = sc.nextLine();
-            } while(coin.length() != 1); //TODO verifs + retour arrière.
+                String choix;
+                do
+                {
+                    System.out.println("Choisissez ligne + colonne (genre 9B)");
+                    choix = sc.nextLine();
+                } while (choix.length() != 2); //TODO Faire meilleur vérif.
 
-            int lig = choix.charAt(0) - '0'; //Ok, ça marche pour transformer un char en int :o
-            System.out.println(lig);
-            this.tabContainer[lig - 1][(int)(choix.charAt(1)) - 65]
-                    .getCoins()[Integer.parseInt(coin) - 1].setOccupant(joueurActif);
-            System.out.println(this.tabContainer[lig - 1][(int)(choix.charAt(1)) - 65]
-                    .getCoins()[Integer.parseInt(coin) - 1].isOccupe());
-            // -64 pour les lettres et -1 pour le tableau
-            //TODO Comment compter points
-
-            for (int i = 0; i < nbLig; i++)
-                for (int j = 0; j < nbCol; j++)
-                    this.tabContainer[i][j].setScoreJoueur();
+                String coin;
+                do
+                {
+                    System.out.println("Choisissez l'un des quatres coins (1 à 4)");
+                    coin = sc.nextLine();
+                } while (coin.length() != 1); //TODO verifs + retour arrière.
 
 
+                int lig = choix.charAt(0) - '0'; //Ok, ça marche pour transformer un char en int :o
 
-            //Gestion de tours, à changer pour permettre + que 2 joueurs.
-            this.joueurActif.setNbTwistLock(joueurActif.getNbTwistLock() - 1);
+                if (!tabContainer[lig - 1][(int) choix.charAt(1) - 65].getCoins()[Integer.parseInt(coin) - 1].isOccupe())
+                {
+                    this.tabContainer[lig - 1][(int) (choix.charAt(1)) - 65]
+                            .getCoins()[Integer.parseInt(coin) - 1].setOccupant(joueurActif);
+                    // -64 pour les lettres et -1 pour le tableau
+                    //TODO Comment compter points
 
+                    for (int i = 0; i < nbLig; i++)
+                        for (int j = 0; j < nbCol; j++)
+                            this.tabContainer[i][j].setScoreJoueur();
+                } else
+                {
+                    System.out.println("Mouvement impossible, pénalité d'un TwistLock");
+                    if (this.joueurActif.getNbTwistLock() != 0)
+                        this.joueurActif.setNbTwistLock(this.joueurActif.getNbTwistLock() - 1);
+                }
+
+
+                //Gestion de tours
+                this.joueurActif.setNbTwistLock(joueurActif.getNbTwistLock() - 1);
+
+            }
+            else
+                System.out.println("Plus de TwistLocks ! Joueur suivant.");
+            //TODO Si 0 Twistlock passer le tour
             for (int i = 0 ; i < this.nbJoueurs ; i++)
                 if (this.joueurActif == PartieConsole.joueurs[i])
                 {
@@ -210,6 +222,5 @@ public class PartieConsole
     public static void main(String[] args)
     {
         new PartieConsole(10, 7, 4);
-        System.out.println(getRouge() + "Hello World !" + getBase() + " Coucou le monde !");
     }
 }
