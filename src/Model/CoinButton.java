@@ -41,6 +41,45 @@ public class CoinButton extends JButton {
                     System.out.println("Le lien de l'image est invalide !");
                 }
             break;
+
+            case "green" :
+                try
+                {
+                    i = ImageIO.read(new File("src/Images/imgContainer"+coin+"_green.png"));
+                    this.setIcon(new ImageIcon(i));
+                    this.color = "green";
+                }
+                catch(Exception e)
+                {
+                    System.out.println("Le lien de l'image est invalide !");
+                }
+                break;
+
+            case "blue" :
+                try
+                {
+                    i = ImageIO.read(new File("src/Images/imgContainer"+coin+"_blue.png"));
+                    this.setIcon(new ImageIcon(i));
+                    this.color = "blue";
+                }
+                catch(Exception e)
+                {
+                    System.out.println("Le lien de l'image est invalide !");
+                }
+                break;
+
+            case "yellow" :
+                try
+                {
+                    i = ImageIO.read(new File("src/Images/imgContainer"+coin+"_yellow.png"));
+                    this.setIcon(new ImageIcon(i));
+                    this.color = "yellow";
+                }
+                catch(Exception e)
+                {
+                    System.out.println("Le lien de l'image est invalide !");
+                }
+                break;
         }
     }
     public void resetColor()

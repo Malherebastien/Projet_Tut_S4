@@ -21,6 +21,7 @@ public class Tablier extends JFrame {
     private JPanel[] panCoups;
     private JLabel[] scoreJoueur;
     private Joueur[] joueur;
+    private int tour;
     public Tablier(Joueur[] joueur) {
         this.setTitle("Bouton");
         this.setSize(400, 300);
@@ -90,63 +91,66 @@ public class Tablier extends JFrame {
         {
             for (int bord = 1 ; bord <= 4 ; bord++ )
             {
-                if ( arrayCP.get(numPanel).getCoinButton(bord).getColor().equals("red") )
+                String couleur = arrayCP.get(numPanel).getCoinButton(bord).getColor();
+
+                if (couleur.equals("red") )
                 {
-                    System.out.println("Bord rouge au container " + numPanel + " et au bord " + bord);
+                    couleur = "red";
+
                     switch (bord) {
                         case 1:
                             if ( numPanel > 6 ) {
-                                arrayCP.get(numPanel - 7).getCoinButton(3).setColor("red");
+                                arrayCP.get(numPanel - 7).getCoinButton(3).setColor(couleur);
                                 if ( numPanel % 7 != 0)
                                 {
-                                    arrayCP.get( numPanel - 8).getCoinButton(4).setColor("red");
-                                    arrayCP.get( numPanel - 1).getCoinButton(2).setColor("red");
+                                    arrayCP.get( numPanel - 8).getCoinButton(4).setColor(couleur);
+                                    arrayCP.get( numPanel - 1).getCoinButton(2).setColor(couleur);
                                 }
                             }
                             else if ( numPanel != 0 )
                             {
-                                arrayCP.get( numPanel - 1).getCoinButton(2).setColor("red");
+                                arrayCP.get( numPanel - 1).getCoinButton(2).setColor(couleur);
                             }
                             break;
                         case 2:
                             System.out.println( numPanel % 7 );
                             if (numPanel > 6) {
                                 if ( numPanel % 7 != 6) {
-                                    arrayCP.get( numPanel - 6).getCoinButton(3).setColor("red");
-                                    arrayCP.get( numPanel + 1).getCoinButton(1).setColor("red");
+                                    arrayCP.get( numPanel - 6).getCoinButton(3).setColor(couleur);
+                                    arrayCP.get( numPanel + 1).getCoinButton(1).setColor(couleur);
                                 }
-                                arrayCP.get( numPanel - 7).getCoinButton(4).setColor("red");
+                                arrayCP.get( numPanel - 7).getCoinButton(4).setColor(couleur);
                             }
                             else if ( numPanel != 6 )
                             {
-                                arrayCP.get( numPanel + 1).getCoinButton(1).setColor("red");
+                                arrayCP.get( numPanel + 1).getCoinButton(1).setColor(couleur);
                             }
                             break;
                         case 3:
                             if (numPanel < 63) {
                                 if ( numPanel % 7 != 0)
                                 {
-                                    arrayCP.get( numPanel + 6).getCoinButton(2).setColor("red");
-                                    arrayCP.get( numPanel - 1).getCoinButton(4).setColor("red");
+                                    arrayCP.get( numPanel + 6).getCoinButton(2).setColor(couleur);
+                                    arrayCP.get( numPanel - 1).getCoinButton(4).setColor(couleur);
                                 }
-                                arrayCP.get(numPanel + 7).getCoinButton(1).setColor("red");
+                                arrayCP.get(numPanel + 7).getCoinButton(1).setColor(couleur);
                             }
                             else if ( numPanel != 63 )
                             {
-                                arrayCP.get(numPanel - 1).getCoinButton(4).setColor("red");
+                                arrayCP.get(numPanel - 1).getCoinButton(4).setColor(couleur);
                             }
                             break;
                         case 4:
                             if ( numPanel < 63 ) {
                                 if ( numPanel % 7 != 6) {
-                                    arrayCP.get( numPanel + 1).getCoinButton(3).setColor("red");
-                                    arrayCP.get(numPanel + 8).getCoinButton(1).setColor("red");
+                                    arrayCP.get( numPanel + 1).getCoinButton(3).setColor(couleur);
+                                    arrayCP.get(numPanel + 8).getCoinButton(1).setColor(couleur);
                                 }
-                                arrayCP.get( numPanel + 7).getCoinButton(2).setColor("red");
+                                arrayCP.get( numPanel + 7).getCoinButton(2).setColor(couleur);
                             }
                             else if ( numPanel != 69 )
                             {
-                                arrayCP.get(numPanel + 1).getCoinButton(3).setColor("red");
+                                arrayCP.get(numPanel + 1).getCoinButton(3).setColor(couleur);
                             }
                             break;
                     }

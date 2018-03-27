@@ -55,7 +55,7 @@ public class Container
 
     public String toString3()
     {
-        return "----" + this.coins[3].toString();
+        return "----" + this.coins[2].toString();
     }
 
     public int getValeur()

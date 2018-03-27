@@ -147,8 +147,8 @@ public class PartieConsole
 				if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
 			}
 			else
-			if (Integer.parseInt(saisie) < 4 && Integer.parseInt(saisie) > 0) return true;
-		} catch (Exception e) {}
+			if (Integer.parseInt(saisie) <= 4 && Integer.parseInt(saisie) > 0) return true;
+		} catch (Exception e){}
 
 		return false;
 	}
@@ -234,7 +234,7 @@ public class PartieConsole
 
 			if (i == nbLig-1)
 			{
-				sRet += "   " + this.tabContainer[i][0].getCoins()[2];
+				sRet += "   " + this.tabContainer[i][3].getCoins()[2];
 
 				for (int j = 0 ; j < nbCol ; j++)
 					sRet += this.tabContainer[i][j].toString3();
