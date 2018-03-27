@@ -70,6 +70,7 @@ public class PartieConsole
         {
             System.out.println("C'est le tour du joueur " + joueurActif.getCodeCouleur() + joueurActif.getCouleur() +
                     getBase() + "!\nIl lui reste " + this.joueurActif.getNbTwistLock() + " TwistLocks !");
+            System.out.println("Son score est de : " + joueurActif.getScore());
 
             if (this.joueurActif.getNbTwistLock() != 0)
             {
@@ -80,7 +81,7 @@ public class PartieConsole
                 {
                     System.out.println("Choisissez ligne + colonne (genre 9B)");
                     choix = sc.nextLine();
-                } while (choix.length() != 2); //TODO Faire meilleur vérif.
+                } while (choix.length() != 2 || !estPositionValide(choix)); //TODO Faire meilleur vérif.
 
                 String coin;
                 do
@@ -116,7 +117,7 @@ public class PartieConsole
             }
             else
                 System.out.println("Plus de TwistLocks ! Joueur suivant.");
-            //TODO Si 0 Twistlock passer le tour
+
             for (int i = 0 ; i < this.nbJoueurs ; i++)
                 if (this.joueurActif == PartieConsole.joueurs[i])
                 {
@@ -126,6 +127,20 @@ public class PartieConsole
                     break;
                 }
         }
+    }
+
+    private boolean estPositionValide(String pos)
+    {
+        try {
+            int lig = Integer.parseInt(pos.charAt(0)+"");
+            int col = pos.charAt(1)-65;
+
+            System.out.println("lig : " + lig + "\t col : " + col);
+
+            if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
+        } catch (Exception e) {}
+
+        return false;
     }
 
     private boolean estFinDePartie()
@@ -223,6 +238,6 @@ public class PartieConsole
 
     public static void main(String[] args)
     {
-        new PartieConsole(10, 10, 4);
+        new PartieConsole(10, 15, 4);
     }
 }
