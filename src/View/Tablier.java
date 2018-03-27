@@ -17,6 +17,9 @@ import javax.swing.border.TitledBorder;
 public class Tablier extends JFrame {
     public static CoinButton tableauCoinButton[];
     private static ArrayList<ContainerJPanel> arrayCP = new ArrayList<ContainerJPanel>();
+    private JPanel panCoups;
+    private JLabel scoreJoueur;
+    private Joueur[] joueur;
     public Tablier(Joueur[] joueur) {
         this.setTitle("Bouton");
         this.setSize(400, 300);
@@ -24,19 +27,25 @@ public class Tablier extends JFrame {
         this.setLayout(new FlowLayout());
         JPanel grille = new JPanel(new GridLayout(10,7));
 
+        this.joueur = joueur;
+
         for ( int i = 0 ; i < 70 ; i++ ) {
             ContainerJPanel cP = new ContainerJPanel();
             arrayCP.add(cP);
             grille.add(cP);
         }
 
-        Color[] color = {Color.red, Color.green, Color.blue, Color.yellow};
-
         for(int i = 0; i < joueur.length; i++) {
             JPanel pan = new JPanel(new BorderLayout());
             pan.add(new JLabel(new ImageIcon("im" + i + ".png")), BorderLayout.NORTH);
-            JLabel nbCoups = new JLabel("Joueur " + i + " : " + joueur[i].getScore() + ", il lui reste " + joueur[i].getNbTwistLock());
-            pan.add(nbCoups, BorderLayout.SOUTH);
+            scoreJoueur = new JLabel(joueur[i].getNom() + " : " + joueur[i].getScore());
+            pan.add(scoreJoueur, BorderLayout.CENTER);
+            panCoups = new JPanel(new GridLayout(2,10));
+            for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
+                panCoups.add(new JLabel("*"));
+            }
+            pan.add(panCoups, BorderLayout.SOUTH);
+            pan.setBorder(BorderFactory.createLoweredBevelBorder());
             add(pan);
         }
 
@@ -57,8 +66,19 @@ public class Tablier extends JFrame {
 
         new Tablier(j);
     }
-    //
-    public static void actualiserIHM()
+
+    public void actualiserScore() {
+        for(int i = 0; i < joueur.length; i++) {
+            scoreJoueur = new JLabel(joueur[i].getNom() + " : " + joueur[i].getScore());
+            panCoups = new JPanel(new GridLayout(2,10));
+            for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
+                panCoups.add(new JLabel("*"));
+            }
+        }
+    }
+
+    //t
+    public static void colorerRond()
     {
         for ( int numPanel = 0 ; numPanel < arrayCP.size() ; numPanel++ )
         {

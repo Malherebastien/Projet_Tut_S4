@@ -60,9 +60,10 @@ public class ContainerJPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source instanceof CoinButton) {
+        if (source instanceof CoinButton)
+        {
             ((CoinButton)source).setColor("red");
         }
-        Tablier.actualiserIHM();
+        Tablier.colorerRond();
     }
 }
