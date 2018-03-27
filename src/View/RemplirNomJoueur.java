@@ -13,7 +13,13 @@ public class RemplirNomJoueur
 		tabCouleur[0] = "ROUGE";
 		tabCouleur[1] = "VERT";
 		tabCouleur[2] = "BLEU";
-		tabCouleur[3] = "JAUNE";
+		tabCouleur[3] = "ORANGE";
+
+		String [] tabCodeCouleur = new String[4];
+		tabCodeCouleur[0] = "#f00";
+		tabCodeCouleur[1] = "0f0";
+		tabCodeCouleur[2] = "00f";
+		tabCodeCouleur[3] = "ff0";
 
 		String message = "";
 		for ( int i = 0; i < nb; i ++)
@@ -29,7 +35,7 @@ public class RemplirNomJoueur
 				}
 			}
 			while(true);
-			Joueur j = new Joueur(tabCouleur[i],tabCouleur[i]);
+			Joueur j = new Joueur(tabCouleur[i],tabCodeCouleur[i]);
 			j.setNom(nom);
 			tabJoueur[i] = j;
 			message += tabJoueur[i].getNom() + ",\n";
