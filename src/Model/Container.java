@@ -5,7 +5,7 @@ import Controler.PartieConsole;
 import java.util.HashMap;
 
 public class Container
-{
+{//
     private int valeur; //Aléatoire entre 5 et 54
 
     private Joueur proprietaire; //Le joueur qui possède le container. null si non possédé ou inégalité.
