@@ -9,6 +9,7 @@ public class Joueur
 
     private String couleur;
     private String codeCouleur;
+    private String nom;
 
     public Joueur(String couleur, String codeCouleur)
     {
@@ -16,7 +17,12 @@ public class Joueur
         this.score = score;
         this.couleur = couleur;
         this.codeCouleur = codeCouleur;
+        this.nom = "";
     }
+
+    public String getNom() { return this.nom;}
+
+    public void setNom(String nom) { this.nom = nom;}
 
     public int getNbTwistLock()
     {
