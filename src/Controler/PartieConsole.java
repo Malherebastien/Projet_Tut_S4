@@ -153,6 +153,25 @@ public class PartieConsole
 		return false;
 	}
 
+	public boolean estSaisieValideServeur(String saisie)
+	{
+		try {
+			if (saisie.length() == 3)
+			{
+				int lig  = Integer.parseInt(saisie.substring(0,1));
+				int col  = Character.toUpperCase(saisie.charAt(1))-65;
+				int coin = Integer.parseInt(saisie.substring(2,saisie.length()-1));
+
+				if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
+				if (coin <=0 || coin >= 5 ) return true;
+			}
+
+			//if (Integer.parseInt(saisie) < 4 && Integer.parseInt(saisie) > 0) return true;
+		} catch (Exception e) {}
+
+		return false;
+	}
+
 
 
 	private boolean estFinDePartie()
@@ -239,5 +258,9 @@ public class PartieConsole
 	}
 
 	public Container getContainer(int i, int j){ return this.tabContainer[i][j];}
+
+	public Joueur getJoueurActif () { return this.joueurActif;}
+
+	public int getNbJoueurs () { return this.nbJoueurs;}
 
 }
