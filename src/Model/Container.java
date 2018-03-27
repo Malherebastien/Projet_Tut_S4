@@ -44,7 +44,7 @@ public class Container
     {
         return "----" + this.coins[1].toString();
     }
-//
+
     public String toString2()
     {
         if (proprietaire != null)

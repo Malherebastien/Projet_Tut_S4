@@ -7,7 +7,7 @@ import Model.Joueur;
 import java.util.Scanner;
 
 public class PartieConsole
-{//
+{
 	public static Joueur[] joueurs;
 
 	private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m", "Bleu;\033[34m", "Orange;\033[33m" };
