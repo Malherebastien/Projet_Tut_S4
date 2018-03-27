@@ -8,26 +8,35 @@ import java.util.Scanner;
 
 public class PartieConsole
 {
+    public static Joueur[] joueurs;
+
+    private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m", "Bleu;\033[34m", "Orange;\033[33m" };
+
     private Container[][] tabContainer;
     private Coin[][] tabCoin;
 
     private int nbLig; //Random
     private int nbCol; //Random
 
-    private Joueur joueur1;
-    private Joueur joueur2; //2-4 joueurs max
-
     private Joueur joueurActif;
+    private int nbJoueurs;
 
-    public PartieConsole(int nbLig, int nbCol, Joueur joueur1, Joueur joueur2)
+    public PartieConsole(int nbLig, int nbCol, int nbJoueurs)
     {
         this.nbLig = nbLig;
         this.nbCol = nbCol;
 
-        this.joueur1 = joueur1;
-        this.joueur2 = joueur2;
+        if (nbJoueurs < 2) nbJoueurs = 2;
+        if (nbJoueurs > 4) nbJoueurs = 4;
 
-        this.joueurActif = joueur1; // Oui, arbitrairement, parce que je fais qu'est-ce que je veux.
+        this.nbJoueurs = nbJoueurs;
+        PartieConsole.joueurs = new Joueur[nbJoueurs];
+
+        for (int i = 0 ; i < nbJoueurs ; i++)
+            PartieConsole.joueurs[i] = new Joueur(PartieConsole.COULEURS[i].split(";")[0], PartieConsole.COULEURS[i].split(";")[1]);
+
+        this.joueurActif = PartieConsole.joueurs[(int)(Math.random()*nbJoueurs)+0]; // Oui, arbitrairement, parce que je fais qu'est-ce que je veux.
+                                                                                // Un aléatoire c'est quand même mieux
 
         tabContainer = new Container[nbLig][nbCol];
         for (int i = 0; i < nbLig; i++)
@@ -57,7 +66,8 @@ public class PartieConsole
         System.out.println("==============================================");
 
         Scanner sc = new Scanner(System.in);
-        while (joueur1.getNbTwistLock() != 0 && joueur2.getNbTwistLock() != 0)
+        //TODO si joueurCourant n'a plus de TwistLock, passer au suivant
+        while (!this.estFinDePartie())
         {
             System.out.println("C'est le tour du joueur " + joueurActif.getCodeCouleur() + joueurActif.getCouleur() +
                     getBase() + "!\nIl lui reste " +
@@ -88,13 +98,32 @@ public class PartieConsole
             // -64 pour les lettres et -1 pour le tableau
             //TODO Comment compter points
 
+            for (int i = 0; i < nbLig; i++)
+                for (int j = 0; j < nbCol; j++)
+                    this.tabContainer[i][j].setScoreJoueur();
+
+
+
             //Gestion de tours, à changer pour permettre + que 2 joueurs.
             this.joueurActif.setNbTwistLock(joueurActif.getNbTwistLock() - 1);
-            if (this.joueurActif == joueur1)
-                this.joueurActif = joueur2;
-            else
-                this.joueurActif = joueur1;
+
+            for (int i = 0 ; i < this.nbJoueurs ; i++)
+                if (this.joueurActif == PartieConsole.joueurs[i])
+                {
+                    if (i == this.nbJoueurs-1) this.joueurActif = PartieConsole.joueurs[0];
+                    else                       this.joueurActif = PartieConsole.joueurs[i+1];
+
+                    break;
+                }
         }
+    }
+
+    private boolean estFinDePartie()
+    {
+        for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
+            if (PartieConsole.joueurs[i].getNbTwistLock() != 0) return false;
+
+        return true;
     }
 
     private String afficherTableauContainer()
@@ -105,7 +134,6 @@ public class PartieConsole
 
         for (int i = 0; i < nbLig; i++)
         {
-
             sRet += "  " + this.tabContainer[i][0].toString1();
             sRet += this.tabContainer[i][1].toString1();
             sRet += this.tabContainer[i][2].toString1();
@@ -113,6 +141,7 @@ public class PartieConsole
             sRet += this.tabContainer[i][4].toString1();
             sRet += this.tabContainer[i][5].toString1();
             sRet += this.tabContainer[i][6].toString1() + "\n";
+
 
             sRet += String.valueOf((char) ('A' + i));
             sRet += " " + this.tabContainer[i][0].toString2();
@@ -165,26 +194,6 @@ public class PartieConsole
         this.nbLig = nbLig;
     }
 
-    public Joueur getJoueur1()
-    {
-        return joueur1;
-    }
-
-    public void setJoueur1(Joueur joueur1)
-    {
-        this.joueur1 = joueur1;
-    }
-
-    public Joueur getJoueur2()
-    {
-        return joueur2;
-    }
-
-    public void setJoueur2(Joueur joueur2)
-    {
-        this.joueur2 = joueur2;
-    }
-
     public static String getRouge() {
         return "\033[31m";
     }
@@ -200,7 +209,7 @@ public class PartieConsole
 
     public static void main(String[] args)
     {
-        new PartieConsole(10, 7, new Joueur("Rouge", "\033[31m"), new Joueur("Vert", "\033[32m"));
+        new PartieConsole(10, 7, 4);
         System.out.println(getRouge() + "Hello World !" + getBase() + " Coucou le monde !");
     }
 }
