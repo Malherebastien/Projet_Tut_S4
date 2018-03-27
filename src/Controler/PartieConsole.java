@@ -147,7 +147,7 @@ public class PartieConsole
                 if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
             }
             else
-                if (Integer.parseInt(saisie) < 4 && Integer.parseInt(saisie) > 0) return true;
+                if (Integer.parseInt(saisie) <= 4 && Integer.parseInt(saisie) > 0) return true;
         } catch (Exception e) {}
 
         return false;
