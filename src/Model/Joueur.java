@@ -2,7 +2,7 @@ package Model;
 
 public class Joueur
 {
-    private final int INIT_TWIST_LOCK = 20;
+    private final int INIT_TWIST_LOCK = 1;
 
     private int nbTwistLock; //Commence à 20
     private int score;
@@ -62,5 +62,10 @@ public class Joueur
     public String getBase()
     {
         return "\033[30m";
+    }
+
+    public String toString()
+    {
+        return codeCouleur + couleur + getBase();
     }
 }

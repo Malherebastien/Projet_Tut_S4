@@ -59,7 +59,10 @@ public class PartieConsole
             }
         }
         //Remplissage du tableau de Model.Coin de chaque Model.Container (moins compliqué que ce que je pensais)
+    }
 
+    public void lancerPartie()
+    {
         System.out.println("==============================================");
         System.out.println("             Début de partie !");
         System.out.println("==============================================");
@@ -68,9 +71,9 @@ public class PartieConsole
 
         while (!this.estFinDePartie())
         {
-            System.out.println("C'est le tour du joueur " + joueurActif.getCodeCouleur() + joueurActif.getCouleur() +
-                    getBase() + "!\nIl lui reste " + this.joueurActif.getNbTwistLock() + " TwistLocks !");
-            System.out.println("Son score est de : " + joueurActif.getScore());
+            System.out.println("C'est le tour du joueur " + joueurActif.getCodeCouleur() + joueurActif.getCouleur() + getBase() + " !");
+            System.out.println("\tTwistLock(s) restant(s) : " + this.joueurActif.getNbTwistLock());
+            System.out.println("\tScore : " + joueurActif.getScore() + "\n");
 
             if (this.joueurActif.getNbTwistLock() != 0)
             {
@@ -81,7 +84,7 @@ public class PartieConsole
                 {
                     System.out.println("Choisissez ligne + colonne (genre 9B)");
                     choix = sc.nextLine();
-                } while (choix.length() != 2 || !estSaisieValide(choix));
+                } while ((choix.length() <= 2 && choix.length() >= 3) && !estSaisieValide(choix));
 
                 String coin;
                 do
@@ -91,13 +94,18 @@ public class PartieConsole
                 } while (coin.length() != 1 || !estSaisieValide(coin));
 
 
-                int lig = choix.charAt(0) - '0'; //Ok, ça marche pour transformer un char en int :o
+                int lig = Integer.parseInt(choix.substring(0, choix.length()-1));
 
-                if (!tabContainer[lig - 1][(int) Character.toUpperCase(choix.charAt(1)) - 65].getCoins()[Integer.parseInt(coin) - 1].isOccupe())
+                if (!tabContainer[lig - 1][(int) Character.toUpperCase(choix.charAt(choix.length()-1)) - 65].getCoins()[Integer.parseInt(coin) - 1].isOccupe())
                 {
-                    this.tabContainer[lig - 1][(int) Character.toUpperCase(choix.charAt(1)) - 65].getCoins()[Integer.parseInt(coin) - 1].setOccupant(joueurActif);
+                    this.tabContainer[lig - 1][(int) Character.toUpperCase(choix.charAt(choix.length()-1)) - 65].getCoins()[Integer.parseInt(coin) - 1].setOccupant(joueurActif);
                     // -64 pour les lettres et -1 pour le tableau
 
+                    // Parcours des joueurs pour remettres leurs points à 0 avant de fair eune nouvelle affectation
+                    for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
+                        PartieConsole.joueurs[i].setScore(0);
+
+                    // Parcours des containers pour mettre les points aux joueurs
                     for (int i = 0; i < nbLig; i++)
                         for (int j = 0; j < nbCol; j++)
                             this.tabContainer[i][j].setScoreJoueur();
@@ -125,15 +133,17 @@ public class PartieConsole
                     break;
                 }
         }
+
+        System.out.println(afficherFinPartie());
     }
 
     private boolean estSaisieValide(String saisie)
     {
         try {
-            if (saisie.length() == 2)
+            if (saisie.length() >= 2)
             {
-                int lig = Integer.parseInt(saisie.charAt(0)+"");
-                int col = Character.toUpperCase(saisie.charAt(1))-65;
+                int lig = Integer.parseInt(saisie.substring(0,saisie.length()-1));
+                int col = Character.toUpperCase(saisie.charAt(saisie.length()-1))-65;
 
                 System.out.println("lig : " + lig + "\t col : " + col);
 
@@ -146,12 +156,36 @@ public class PartieConsole
         return false;
     }
 
+
+
     private boolean estFinDePartie()
     {
         for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
             if (PartieConsole.joueurs[i].getNbTwistLock() != 0) return false;
 
         return true;
+    }
+
+    private String afficherFinPartie()
+    {
+        String sRet = "";
+
+        sRet += "\n\nFIN DE PARTIE\n\n";
+
+        Joueur gagnant = PartieConsole.joueurs[0];
+
+        for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
+        {
+            Joueur jTmp = PartieConsole.joueurs[i];
+
+            sRet += "\tJoueur " + jTmp + " : " + jTmp.getScore() + "\n";
+
+            if (jTmp.getScore() > gagnant.getScore()) gagnant = jTmp;
+        }
+
+        sRet += "\nLE GAGNANT EST : joueur " + gagnant + " avec " + gagnant.getScore() + " points !!!";
+
+        return sRet;
     }
 
     private String afficherTableauContainer()
@@ -204,6 +238,6 @@ public class PartieConsole
 
     public static void main(String[] args)
     {
-        new PartieConsole(10, 15, 4);
+        new PartieConsole(10, 15, 4).lancerPartie();
     }
 }
