@@ -10,8 +10,10 @@ import java.util.ArrayList;
 
 public class ContainerJPanel extends JPanel implements ActionListener {
     private ArrayList <CoinButton> alCoinButton   = new ArrayList<CoinButton>();
-    public ContainerJPanel()
+    Tablier tablier;
+    public ContainerJPanel(Tablier tablier)
     {
+        this.tablier = tablier;
         this.setLayout(new GridLayout(3,2));
         alCoinButton.add(new CoinButton("BD"));
         alCoinButton.add(new CoinButton("BG"));
@@ -31,7 +33,7 @@ public class ContainerJPanel extends JPanel implements ActionListener {
 
         this.add(vide);
 
-        JLabel nb = new JLabel("51");
+        JLabel nb = new JLabel(String.valueOf((int)(Math.random() * 49 + 5)));
         nb.setBackground(Color.getHSBColor(hsb[0],hsb[1],hsb[2]));
         nb.setOpaque(true);
 
@@ -64,6 +66,7 @@ public class ContainerJPanel extends JPanel implements ActionListener {
         {
             ((CoinButton)source).setColor("red");
         }
-        Tablier.colorerRond();
+        tablier.colorerRond();
+        tablier.actualiserScore();
     }
 }
