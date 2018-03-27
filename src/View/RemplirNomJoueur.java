@@ -39,7 +39,6 @@ public class RemplirNomJoueur
 			tabJoueur[i] = j;
 			message += tabJoueur[i].getNom() + ",\n";
 		}
-		JOptionPane.showMessageDialog( null, message + "ont été créés!");
 
 		new Tablier(tabJoueur);
 	}
