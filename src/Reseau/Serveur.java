@@ -67,7 +67,6 @@ public class Serveur
 				envoyerMsg(numJ, msg);
 				envoyerMsg(couleurJ, msg);
 
-				//Joueur j = new Joueur( couleurJ, codeCouleurJ);
 				tabNomJ[nombreJoueur] = msgRecu.substring(6);
 				tabClient[nombreJoueur] = msg;
 				nombreJoueur ++;
@@ -120,6 +119,7 @@ public class Serveur
 		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), dpReceveurMessage.getAddress(), dpReceveurMessage.getPort());
 		ds.send(reponse);
 	}
+
 
 	public static void main (String args[]) throws Exception
 	{
