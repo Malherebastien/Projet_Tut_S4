@@ -81,24 +81,22 @@ public class PartieConsole
                 {
                     System.out.println("Choisissez ligne + colonne (genre 9B)");
                     choix = sc.nextLine();
-                } while (choix.length() != 2 || !estPositionValide(choix)); //TODO Faire meilleur vérif.
+                } while (choix.length() != 2 || !estSaisieValide(choix));
 
                 String coin;
                 do
                 {
                     System.out.println("Choisissez l'un des quatres coins (1 à 4)");
                     coin = sc.nextLine();
-                } while (coin.length() != 1); //TODO verifs + retour arrière.
+                } while (coin.length() != 1 || !estSaisieValide(coin));
 
 
                 int lig = choix.charAt(0) - '0'; //Ok, ça marche pour transformer un char en int :o
 
-                if (!tabContainer[lig - 1][(int) choix.charAt(1) - 65].getCoins()[Integer.parseInt(coin) - 1].isOccupe())
+                if (!tabContainer[lig - 1][(int) Character.toUpperCase(choix.charAt(1)) - 65].getCoins()[Integer.parseInt(coin) - 1].isOccupe())
                 {
-                    this.tabContainer[lig - 1][(int) (choix.charAt(1)) - 65]
-                            .getCoins()[Integer.parseInt(coin) - 1].setOccupant(joueurActif);
+                    this.tabContainer[lig - 1][(int) Character.toUpperCase(choix.charAt(1)) - 65].getCoins()[Integer.parseInt(coin) - 1].setOccupant(joueurActif);
                     // -64 pour les lettres et -1 pour le tableau
-                    //TODO Comment compter points
 
                     for (int i = 0; i < nbLig; i++)
                         for (int j = 0; j < nbCol; j++)
@@ -129,15 +127,20 @@ public class PartieConsole
         }
     }
 
-    private boolean estPositionValide(String pos)
+    private boolean estSaisieValide(String saisie)
     {
         try {
-            int lig = Integer.parseInt(pos.charAt(0)+"");
-            int col = pos.charAt(1)-65;
+            if (saisie.length() == 2)
+            {
+                int lig = Integer.parseInt(saisie.charAt(0)+"");
+                int col = Character.toUpperCase(saisie.charAt(1))-65;
 
-            System.out.println("lig : " + lig + "\t col : " + col);
+                System.out.println("lig : " + lig + "\t col : " + col);
 
-            if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
+                if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
+            }
+            else
+                if (Integer.parseInt(saisie) < 4 && Integer.parseInt(saisie) > 0) return true;
         } catch (Exception e) {}
 
         return false;
@@ -193,43 +196,6 @@ public class PartieConsole
         return sRet;
     }
 
-    public Container[][] getTabContainer()
-    {
-        return tabContainer;
-    }
-
-    public void setTabContainer(Container[][] tabContainer)
-    {
-        this.tabContainer = tabContainer;
-    }
-
-    public int getNbCol()
-    {
-        return nbCol;
-    }
-
-    public void setNbCol(int nbCol)
-    {
-        this.nbCol = nbCol;
-    }
-
-    public int getNbLig()
-    {
-        return nbLig;
-    }
-
-    public void setNbLig(int nbLig)
-    {
-        this.nbLig = nbLig;
-    }
-
-    public static String getRouge() {
-        return "\033[31m";
-    }
-
-    public static String getVert() {
-        return "\033[32m";
-    }
 
     public static String getBase()
     {
