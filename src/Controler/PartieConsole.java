@@ -84,7 +84,7 @@ public class PartieConsole
                 {
                     System.out.println("Choisissez ligne + colonne (genre 9B)");
                     choix = sc.nextLine();
-                } while ((choix.length() <= 2 && choix.length() >= 3) && !estSaisieValide(choix));
+                } while (!(choix.length() >= 2 && choix.length() <= 3) || !estSaisieValide(choix));
 
                 String coin;
                 do
@@ -92,7 +92,6 @@ public class PartieConsole
                     System.out.println("Choisissez l'un des quatres coins (1 à 4)");
                     coin = sc.nextLine();
                 } while (coin.length() != 1 || !estSaisieValide(coin));
-
 
                 int lig = Integer.parseInt(choix.substring(0, choix.length()-1));
 
@@ -144,8 +143,6 @@ public class PartieConsole
             {
                 int lig = Integer.parseInt(saisie.substring(0,saisie.length()-1));
                 int col = Character.toUpperCase(saisie.charAt(saisie.length()-1))-65;
-
-                System.out.println("lig : " + lig + "\t col : " + col);
 
                 if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
             }
