@@ -17,7 +17,6 @@ public class SelectionJoueur {
 					null,
 					possibilities,
 					"2");
-		System.out.println(s);
 		if( s == null ) {
 			System.exit(0);
 		}
