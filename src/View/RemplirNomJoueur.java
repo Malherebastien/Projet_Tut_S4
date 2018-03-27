@@ -13,7 +13,7 @@ public class RemplirNomJoueur
 		tabCouleur[0] = "ROUGE";
 		tabCouleur[1] = "VERT";
 		tabCouleur[2] = "BLEU";
-		tabCouleur[3] = "ORANGE";
+		tabCouleur[3] = "JAUNE";
 
 		String [] tabCodeCouleur = new String[4];
 		tabCodeCouleur[0] = "#f00";
@@ -39,7 +39,6 @@ public class RemplirNomJoueur
 			tabJoueur[i] = j;
 			message += tabJoueur[i].getNom() + ",\n";
 		}
-		JOptionPane.showMessageDialog( null, message + "ont été créés avec succès!");
 
 		new Tablier(tabJoueur);
 	}

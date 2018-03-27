@@ -1,6 +1,7 @@
 package View;
 
 import Model.CoinButton;
+import Model.Container;
 import Model.ContainerJPanel;
 import Model.Joueur;
 
@@ -26,7 +27,7 @@ public class Tablier extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(new FlowLayout());
         JPanel grille = new JPanel(new GridLayout(10,7));
-
+        grille.setPreferredSize(new Dimension(700,900));
         this.joueur = joueur;
 
         for ( int i = 0 ; i < 70 ; i++ ) {
@@ -51,7 +52,11 @@ public class Tablier extends JFrame {
             pan.add(scoreJoueur[i], BorderLayout.CENTER);
             panCoups[i] = new JPanel(new GridLayout(2,10));
             for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
-                panCoups[i].add(new JLabel("*"));
+                try {
+                    panCoups[i].add(new JLabel(new ImageIcon(ImageIO.read(new File("src/Images/imgPoint_" + (i+1) +".png")))));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             pan.add(panCoups[i], BorderLayout.SOUTH);
             pan.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -64,24 +69,16 @@ public class Tablier extends JFrame {
         this.pack();
     }
 
-    public static void main(String args[]) {
-        Joueur[] j = new Joueur[4];
-
-        j[0] = new Joueur("red", "#f00");
-        j[1] = new Joueur("green", "#0f0");
-        j[2] = new Joueur("blue", "#00f");
-        j[3] = new Joueur("yellow", "#ff0");
-
-
-        new Tablier(j);
-    }
-
     public void actualiserScore() {
         for(int i = 0; i < joueur.length; i++) {
             scoreJoueur[i].setText(joueur[i].getNom() + " , " + joueur[i].getScore());
             panCoups[i].removeAll();
             for(int j = 0; j < joueur[i].getNbTwistLock(); j++) {
-                panCoups[i].add(new JLabel("*"));
+                try {
+                    panCoups[i].add(new JLabel(new ImageIcon(ImageIO.read(new File("src/Images/imgPoint_" + (i+1) +".png")))));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

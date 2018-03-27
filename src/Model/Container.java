@@ -1,5 +1,10 @@
 package Model;
 
+import Controler.PartieConsole;
+
+import java.util.HashMap;
+import java.util.HashMap;
+
 public class Container
 {
     private int valeur; //Aléatoire entre 5 et 54
@@ -24,6 +29,13 @@ public class Container
         this.nbCoins++;
     }
 
+    public void setScoreJoueur()
+    {
+        setProprietaire();
+        if (proprietaire != null)
+            proprietaire.setScore(proprietaire.getScore() + this.valeur);
+    }
+
     public Coin[] getCoins()
     {
         return coins;
@@ -36,6 +48,8 @@ public class Container
 
     public String toString2()
     {
+        if (proprietaire != null)
+            return "| " + this.proprietaire.getCodeCouleur() + String.format("%2d",this.valeur) + this.proprietaire.getBase() + " |";
         return "| " + String.format("%2d",this.valeur) + " |";
     }
 
@@ -59,8 +73,34 @@ public class Container
         return proprietaire;
     }
 
-    public void setProprietaire(Joueur proprietaire)
+    public void setProprietaire()
     {
-        this.proprietaire = proprietaire;
+        this.proprietaire = null;
+
+        HashMap<Joueur, Integer> mapJoueur = new HashMap<>();
+
+        for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
+            mapJoueur.put(PartieConsole.joueurs[i], 0);
+
+        for (int i = 0; i < coins.length; i++)
+        {
+            if (coins[i].isOccupe())
+                for (Object j : mapJoueur.keySet())
+                    if (coins[i].getOccupant() == (Joueur)j) mapJoueur.put((Joueur)j, mapJoueur.get(j)+1);
+        }
+
+        boolean egalite = false;
+        Joueur premier = null;
+        for (Object j : mapJoueur.keySet())
+        {
+            if (mapJoueur.get((Joueur)j) != 0)
+            {
+                if (premier == null) premier = (Joueur)j;
+                if (mapJoueur.get(premier) < mapJoueur.get(j)) premier = (Joueur)j;
+                if (premier != (Joueur)j && mapJoueur.get(premier) == mapJoueur.get((Joueur)j)) egalite = true;
+            }
+        }
+
+        if (!egalite) this.proprietaire = premier;
     }
 }
