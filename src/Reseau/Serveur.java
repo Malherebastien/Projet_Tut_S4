@@ -16,7 +16,8 @@ public class Serveur
 	private String [] tabCodeCouleur;
 	private DatagramSocket ds;
 
-	public Serveur () throws IOException {
+	public Serveur () throws IOException
+	{
 		//crée une Socket au port 2009
 		ds = new DatagramSocket(2009);
 
@@ -40,6 +41,7 @@ public class Serveur
 		tabCodeCouleur[2] = "00f";
 		tabCodeCouleur[3] = "ff0";
 
+		lancerServeur();
 	}
 
 	public void lancerServeur() throws IOException
@@ -113,7 +115,7 @@ public class Serveur
 		}
 	}
 
-	public void envoyerMsg(String msg, DatagramPacket dpReceveurMessage) throws IOException
+	private void envoyerMsg(String msg, DatagramPacket dpReceveurMessage) throws IOException
 	{
 		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), dpReceveurMessage.getAddress(), dpReceveurMessage.getPort());
 		ds.send(reponse);
@@ -121,7 +123,7 @@ public class Serveur
 
 	public static void main (String args[]) throws Exception
 	{
-		new Serveur().lancerServeur();
+		new Serveur();
 	}
 
 }

@@ -2,61 +2,67 @@ package Reseau;
 
 import Model.Joueur;
 
+import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
 
 public class Client
 {
+	private DatagramSocket ds;
 
-	public static void main (String args[]) throws Exception
+	public Client() throws IOException
 	{
-
-		DatagramSocket ds = new DatagramSocket(); // connecte le client
+		ds = new DatagramSocket(); // connecte le client
 
 		Scanner scNom = new Scanner(System.in);
 		String msgNom = "Name :" + scNom.nextLine();
 
-		// crée un envoyeur qui envoie les bits, taill du msg à l'adresse internet "localhost" sur le port 2009
-		DatagramPacket envoiNom = new DatagramPacket(msgNom.getBytes(), msgNom.length(), InetAddress.getByName("localhost"), 2009);
-		//envoie le msg
-		ds.send(envoiNom);
+		envoyerMsg(msgNom);
+		System.out.println(recevoirMsg());
 
-		//crée un receveur qui va recevoir la taille et la taille du msg
-		DatagramPacket dpNom = new DatagramPacket(new byte[512], 512);
-		//recois le msg
-		ds.receive(dpNom);
-		//ecris la String (decodé)
-		System.out.println(new String(dpNom.getData()));
+		String cpt = recevoirMsg();
 
-		DatagramPacket dpCpt = new DatagramPacket(new byte[512], 512);
-		ds.receive(dpCpt);
+		String couleur = recevoirMsg();
 
-		DatagramPacket dpCouleur = new DatagramPacket(new byte[512], 512);
-		ds.receive(dpCouleur);
+		System.out.println( "Vous etes le Joueur " + cpt + " (" + couleur + ") " + " attente suite ..." );
 
-		System.out.println( "Vous etes le Joueur " + new String(dpCpt.getData()) + " (" + new String (dpCouleur.getData()) + ") " + " attente suite ..." );
+		System.out.println( recevoirMsg() );
+		System.out.println( recevoirMsg() );
 
-		DatagramPacket dpPartieCommence = new DatagramPacket(new byte[512], 512);
-		ds.receive(dpPartieCommence);
-		System.out.println(new String(dpPartieCommence.getData()));
+		lancerClient();
 
-		DatagramPacket dpMap = new DatagramPacket(new byte[512], 512);
-		ds.receive(dpMap);
-		System.out.println(new String(dpMap.getData()));
+	}
 
+	public void lancerClient() throws IOException
+	{
 		while ( true )
 		{
 			Scanner sc = new Scanner(System.in);
 			String message = sc.nextLine();
 
-			DatagramPacket envoi = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getByName("localhost"), 2009);
-			ds.send(envoi);
-
-			/*DatagramPacket msg = new DatagramPacket(new byte[512], 512);
-			ds.receive(msg);
-			System.out.println(new String(msg.getData()));*/
-
+			envoyerMsg(message);
 		}
-		//ds.close();
+	}
+
+	public static void main (String args[]) throws Exception
+	{
+		new Client();
+	}
+
+	private void envoyerMsg(String msg) throws IOException
+	{
+		// crée un envoyeur qui envoie les bits, taill du msg à l'adresse internet "localhost" sur le port 2009
+		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), InetAddress.getByName("localhost"), 2009);
+		//envoie le msg
+		ds.send(reponse);
+	}
+
+	private String recevoirMsg() throws IOException
+	{
+		//crée un receveur qui va recevoir la taille et la taille du msg
+		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
+		//recois le msg
+		ds.receive(dpMsg);
+		return new String(dpMsg.getData());
 	}
 }
