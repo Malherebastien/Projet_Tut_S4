@@ -130,7 +130,7 @@ public class Client
 		//crée un receveur qui va recevoir la taille et la taille du msg
 		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
 		//recois le msg
-		ds.receive(dpMsg); //
+		ds.receive(dpMsg);
 		return new String(dpMsg.getData()).trim();
 	}
 

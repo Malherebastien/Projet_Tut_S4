@@ -67,7 +67,6 @@ public class Serveur
 				}
 				if ( nombreJoueur == 2 )
 				{
-					System.out.println("bite");
 					if ( !partieCommencerBok )
 					{
 						System.out.println("debut partie");
@@ -103,7 +102,7 @@ public class Serveur
 							//fait jouer le joueur courant
 							signal10();
 
-							String coordonnees = recevoirMsg();
+							String coordonnees = recevoirMsg(); System.out.println(coordonnees);
 							//test erreur coord
 							if (!verifCoord(coordonnees)) { signalErreur();	}
 							else
@@ -301,7 +300,8 @@ public class Serveur
 				map += (int) (Math.random()*54)+4;
 				if ( j < nbCol -1 ) map += ":";
 			}
-			map += "|";
+
+			if (i < nbLigne-1) map += "|";
 		}
 		return map;
 	}
@@ -311,14 +311,17 @@ public class Serveur
 		try
 		{
 			if (coord.length() == 3) {
-				int lig = Integer.parseInt(coord.substring(0, 1));
-				int col = Character.toUpperCase(coord.charAt(1)) - 65;
-				int coin = Integer.parseInt(coord.substring(2, coord.length() - 1));
+				int lig = Integer.parseInt(coord.charAt(0)+""); System.out.println("Parsing ligne OK");
+				int col = Character.toUpperCase(coord.charAt(1)) - 65; System.out.println("Parsing colonne OK");
+				int coin = Integer.parseInt(coord.charAt(2)+""); System.out.println("Parsing coin OK");
 
-				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0) return true;
-				if (coin <= 0 || coin >= 5) return true;
+				System.out.println("Parsing OK");
+
+				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0 && coin >= 1 || coin <= 4) return true;
 			}
-		}catch (Exception e){}
+		}catch (Exception e){ System.out.println("Erreur parsing"); }
+
+		System.out.println("FAUX");
 
 		return false;
 	}
@@ -335,7 +338,7 @@ public class Serveur
 		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
 		//recois le msg
 		ds.receive(dpMsg);
-		return new String(dpMsg.getData());
+		return new String(dpMsg.getData()).trim();
 	}
 
 
