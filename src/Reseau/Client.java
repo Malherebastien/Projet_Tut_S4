@@ -84,11 +84,12 @@ public class Client
                 if (sig == 20)
                 {
                     String donnees = recevoirMsg();
+                    //Signal 22
+					if (estEntier(donnees) && Integer.parseInt(donnees) == 22) System.out.println("22 - Coup adversaire illegal");
+					else System.out.println("20 - Coup adversaire : " + donnees);
                 }
 
                 if (sig == 21) System.out.println("21 - Coup illegal");
-
-                if (sig == 22) System.out.println("22 - Coup adversaire illegal");
 
                 if (sig == 50) System.out.println("50 - Vous ne pouvez plus jouer");
 
@@ -137,7 +138,7 @@ public class Client
 	private void initGrille(String map)
 	{
 	    joueurs = new Joueur[] { new Joueur(COULEURS[0].split(";")[0], COULEURS[0].split(";")[1]),
-	                             new Joueur(COULEURS[1].split(";")[1], COULEURS[1].split(";")[1]) };
+	                             new Joueur(COULEURS[1].split(";")[0], COULEURS[1].split(";")[1]) };
 
 	    joueurActif = joueurs[0];
 

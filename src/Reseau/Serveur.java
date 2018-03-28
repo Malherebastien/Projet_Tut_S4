@@ -45,25 +45,27 @@ public class Serveur
 
 			while (true)
 			{
-				DatagramPacket msg = new DatagramPacket(new byte[512], 512);
-				ds.receive(msg);
-
-				String msgRecu = new String(msg.getData());
-				System.out.println("message Recu : " + msgRecu);
-				signal = "";
-
-				if ( msgRecu.contains("Name :") && nombreJoueur < 2)
+				if ( !partieCommencerBok )
 				{
-					String couleurJ = COULEURS[nombreJoueur].split(";")[0];
+					DatagramPacket msg = new DatagramPacket(new byte[512], 512);
+					ds.receive(msg);
 
-					String msgInfoJoueur = couleurJ + ";" + nombreJoueur + ";";
+					String msgRecu = new String(msg.getData());
+					System.out.println("message Recu : " + msgRecu);
+					signal = "";
 
-					envoyerMsg(msgInfoJoueur, msg);
+					if (msgRecu.contains("Name :") && nombreJoueur < 2) {
+						String couleurJ = COULEURS[nombreJoueur].split(";")[0];
 
-					tabNomJ[nombreJoueur] = msgRecu.substring(6);
-					tabClient[nombreJoueur] = msg;
-					nombreJoueur ++;
+						String msgInfoJoueur = couleurJ + ";" + nombreJoueur + ";";
 
+						envoyerMsg(msgInfoJoueur, msg);
+
+						tabNomJ[nombreJoueur] = msgRecu.substring(6);
+						tabClient[nombreJoueur] = msg;
+						nombreJoueur++;
+
+					}
 				}
 				if ( nombreJoueur == 2 )
 				{
@@ -118,6 +120,7 @@ public class Serveur
 					}
 
 				}
+				System.out.println("new tour");
 
 			}
 		} catch (IOException ioe) { ioe.printStackTrace(); }
@@ -126,12 +129,14 @@ public class Serveur
 	private void initGrille(String map)
 	{
 		joueurs = new Joueur[] { new Joueur(COULEURS[0].split(";")[0], COULEURS[0].split(";")[1]),
-				                 new Joueur(COULEURS[1].split(";")[1], COULEURS[1].split(";")[1]) };
+				                 new Joueur(COULEURS[1].split(";")[0], COULEURS[1].split(";")[1]) };
 
 		joueurs[0].setNom(tabNomJ[0]);
 		joueurs[1].setNom(tabNomJ[1]);
 
 		joueurActif = joueurs[0];
+		System.out.println("Joueur actif:" + joueurActif.getCouleur());
+		System.out.println("Joueur actif:" + joueurActif.getCouleur());
 
 		tabCoin = new Coin[nbLigne+1][nbCol+1];
 
@@ -169,7 +174,7 @@ public class Serveur
 				envoyerMsg(signal, tabClient[i] );
 				envoyerMsg(map   , tabClient[i] );
 			}
-		}catch (IOException ioe){ioe.printStackTrace();}
+		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 01"); }
 	}
 
 	private void signal88()
@@ -181,7 +186,7 @@ public class Serveur
 				envoyerMsg(signal, tabClient[0]);
 				envoyerMsg(signal, tabClient[1]);
 			}
-		}catch (IOException ioe){ ioe.printStackTrace();}
+		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 88");}
 	}
 
 	private boolean signal50()
@@ -197,7 +202,7 @@ public class Serveur
 					joueurPeutJouer = false;
 				}
 			}
-		}catch (IOException ioe){ ioe.printStackTrace();}
+		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 50");}
 		return joueurPeutJouer;
 	}
 
@@ -209,7 +214,7 @@ public class Serveur
 			{
 				if ( getJoueurActif() != joueurs[i]) { signal = "20"; envoyerMsg(signal, tabClient[i]); }
 			}
-		}catch (IOException ioe){ ioe.printStackTrace();}
+		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 20"); }
 
 	}
 
@@ -225,7 +230,7 @@ public class Serveur
 				}
 			}
 
-		}catch (IOException ioe){ ioe.printStackTrace();}
+		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 10");}
 	}
 
 	private void signalErreur()
@@ -248,7 +253,7 @@ public class Serveur
 			}
 
 
-		}catch (IOException ioe) { ioe.printStackTrace(); }
+		}catch (IOException ioe) { System.out.println("Erreur Signal Erreur"); }
 
 	}
 
@@ -264,10 +269,10 @@ public class Serveur
 				}
 			}
 
-		}catch (IOException ioe){ ioe.printStackTrace(); }
+		}catch (IOException ioe){ System.out.println("Erreur envoi Coord"); }
 	}
 
-	public Joueur getJoueurActif() { return this.joueurActif;}
+	public Joueur getJoueurActif() { return joueurActif;}
 
 	public void initPartie()
 	{
@@ -278,16 +283,9 @@ public class Serveur
 
 	public void changeJoueurActif()
 	{
-		for (int i = 0 ; i < joueurs.length ; i++)
-		{
-			if (this.joueurActif == joueurs[i])
-			{
-				if (i == joueurs.length - 1) this.joueurActif = joueurs[0];
-				else this.joueurActif = joueurs[i + 1];
+		if      ( joueurActif == joueurs[0] ) joueurActif = joueurs[1];
+		else if ( joueurActif == joueurs[1] ) joueurActif = joueurs[0];
 
-				break;
-			}
-		}
 	}
 
 	public String preparerMap ()
