@@ -6,8 +6,11 @@ import Model.Joueur;
 
 import java.util.Scanner;
 
+/**
+ * Classe PartieConsole correspondant à la version console du programme
+ */
 public class PartieConsole
-{//
+{
 	public static Joueur[] joueurs;
 
 	private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m", "Bleu;\033[34m", "Orange;\033[33m" };
@@ -21,6 +24,14 @@ public class PartieConsole
 	private Joueur joueurActif;
 	private int nbJoueurs;
 
+    /**
+     * Constructeur de la classe PartieConsole
+     * Initialise un nombre de lignes, colonnes et un nombre de joueurs
+     *
+     * @param nbLig
+     * @param nbCol
+     * @param nbJoueurs
+     */
 	public PartieConsole(int nbLig, int nbCol, int nbJoueurs)
 	{
 		this.nbLig = nbLig;
@@ -61,6 +72,9 @@ public class PartieConsole
 		//Remplissage du tableau de Model.Coin de chaque Model.Container (moins compliqué que ce que je pensais)
 	}
 
+    /**
+     * Initialise le début de partie
+     */
 	public void lancerPartie()
 	{
 		System.out.println("==============================================");
@@ -136,6 +150,12 @@ public class PartieConsole
 		System.out.println(afficherFinPartie());
 	}
 
+    /**
+     * Vérifie l'intégrité des donné
+     *
+     * @param saisie
+     * @return boolean
+     */
 	private boolean estSaisieValide(String saisie)
 	{
 		try {
@@ -153,6 +173,12 @@ public class PartieConsole
 		return false;
 	}
 
+    /**
+     * Méthode similaire à 'estSaisieValide' côté serveur
+     *
+     * @param saisie
+     * @return
+     */
 	public boolean estSaisieValideServeur(String saisie)
 	{
 		try {
@@ -173,7 +199,11 @@ public class PartieConsole
 	}
 
 
-
+    /**
+     * Vérifie si la partie est finie
+     *
+     * @return
+     */
 	private boolean estFinDePartie()
 	{
 		for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
