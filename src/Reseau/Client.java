@@ -50,7 +50,7 @@ public class Client
 
             indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
 
-            System.out.println("1-Bonjour " + nom);
+            System.out.println(indJoueur + "-Bonjour " + nom);
             System.out.println("Vous etes le Joueur " + (indJoueur+1) + " (" + msgNumCoul.split(";")[0] + "), " + " attente suite ..." );
         } catch (IOException ioe) { ioe.printStackTrace(); }
     }
@@ -104,6 +104,11 @@ public class Client
                     else
                         System.out.println("88 - Partie Terminée, Vous avez perdu " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
                 }
+
+                if ( sig == 91 )
+				{
+					System.out.println("91 - demande non valide");
+				}
             }
 		}
 	}
