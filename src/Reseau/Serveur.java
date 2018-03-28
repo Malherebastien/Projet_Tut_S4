@@ -301,7 +301,7 @@ public class Serveur
 				map += (int) (Math.random()*54)+4;
 				if ( j < nbCol -1 ) map += ":";
 			}
-			if ( i < nbLigne -1 ) map += "|";
+			map += "|";
 		}
 		return map;
 	}
