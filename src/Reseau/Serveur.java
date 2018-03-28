@@ -147,7 +147,7 @@ public class Serveur
 
 		for (int i = 0 ; i < nbLigne ; i++)
 		{
-			String ligne = map.split("|")[i];
+			String ligne = map.split("\\|")[i];
 
 			for (int j = 0 ; j < nbCol ; j++)
 				tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);

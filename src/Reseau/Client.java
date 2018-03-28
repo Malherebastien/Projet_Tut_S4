@@ -45,7 +45,7 @@ public class Client
 
             envoyerMsg(nom);
 
-            String msgNumCoul = recevoirMsg();
+            String msgNumCoul = recevoirMsg(); msgNumCoul.trim();
 			System.out.println(msgNumCoul);
 
             indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
@@ -146,8 +146,8 @@ public class Client
 
 	    joueurActif = joueurs[0];
 
-	    nbLig = map.split("|").length; System.out.println("nbCol : " + nbLig);
-	    nbCol = map.split("|")[0].split(":").length; System.out.println("nbLig : " + nbLig);
+	    nbLig = map.split("\\|").length;
+	    nbCol = map.split("\\|")[0].split(":").length;
 
         tabCoin = new Coin[nbLig+1][nbCol+1];
 
@@ -159,9 +159,7 @@ public class Client
 
 		for (int i = 0 ; i < nbLig ; i++)
         {
-            String ligne = map.split("|")[i];
-
-            System.out.println("Ligne : " + ligne);
+            String ligne = map.split("\\|")[i];
 
             for (int j = 0 ; j < nbCol ; j++)
                 tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);
