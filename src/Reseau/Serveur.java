@@ -20,6 +20,7 @@ public class Serveur
 	private int nbCol, nbLigne;
 	private PartieConsole partie;
 	private String signal;
+	private Joueur joueurActif;
 
 	public Serveur ()
 	{
@@ -31,17 +32,13 @@ public class Serveur
 		tabClient = new DatagramPacket[2];
 		tabJoueur = new Joueur[2];
 
-		tabCouleur = new String[4];
+		tabCouleur = new String[2];
 		tabCouleur[0] = "ROUGE";
 		tabCouleur[1] = "VERT";
-		tabCouleur[2] = "BLEU";
-		tabCouleur[3] = "JAUNE";
 
-		tabCodeCouleur = new String[4];
+		tabCodeCouleur = new String[2];
 		tabCodeCouleur[0] = "#f00";
 		tabCodeCouleur[1] = "0f0";
-		tabCodeCouleur[2] = "00f";
-		tabCodeCouleur[3] = "ff0";
 
 		lancerServeur();
 	}
@@ -66,11 +63,7 @@ public class Serveur
 					String couleurJ = tabCouleur[nombreJoueur];
 					String codeCouleurJ = tabCodeCouleur[nombreJoueur];
 
-					//signal = "Bonjour " + msgRecu.substring(6);
-					//String numJ = "" + nombreJoueur;
-					//envoyerMsg(signal, msg);
-
-					String msgInfoJoueur = couleurJ + ";" + (nombreJoueur+1) +";";
+					String msgInfoJoueur = couleurJ + ";" + nombreJoueur + ";";
 
 					envoyerMsg(msgInfoJoueur, msg);
 
@@ -96,7 +89,8 @@ public class Serveur
 						signal01(map);
 						System.out.println("envoie map");
 					}
-					else
+
+					if ( partieCommencerBok )
 					{
 						System.out.println("debut jeu");
 						boolean joueurPeutJouer = true;
@@ -132,7 +126,6 @@ public class Serveur
 
 				}
 
-
 			}
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
@@ -144,7 +137,7 @@ public class Serveur
 			{
 				signal = "1";
 				envoyerMsg(signal, tabClient[i] );
-				envoyerMsg(map, tabClient[i]);
+				envoyerMsg(map   , tabClient[i] );
 			}
 		}catch (IOException ioe){ioe.printStackTrace();}
 	}
@@ -266,10 +259,10 @@ public class Serveur
 		{
 			for ( int j = 0; j < nbCol; j++)
 			{
-				map += (int) (Math.random()*50) + 5;
-				map += ":";
+				map += (int) (Math.random()*54)+4;
+				if ( j < nbCol -1 ) map += ":";
 			}
-			map += "|";
+			if ( i < nbLigne -1 ) map += "|";
 		}
 		return map;
 	}

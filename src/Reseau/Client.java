@@ -62,9 +62,9 @@ public class Client
 		while (true)
 		{
             String signal = recevoirMsg();
-            System.out.println(signal);
+            signal = signal.trim();
 
-            if (estEntier(signal))
+           	if (estEntier(signal))
             {
                 int sig = Integer.parseInt(signal);
 
@@ -72,9 +72,9 @@ public class Client
 
                 if (sig == 10)
                 {
-                    Scanner sc = new Scanner(System.in);
-
                     System.out.print("10 - A vous de jouer + (" + joueurs[indJoueur].getCouleur() + ") : ");
+
+					Scanner sc = new Scanner(System.in);
                     envoyerMsg(sc.nextLine());
 
                     sc.close();
@@ -108,7 +108,10 @@ public class Client
 
 	private boolean estEntier(String val)
     {
-        try { Integer.parseInt(val); return true; } catch (Exception e) {}
+        try
+		{
+			Integer.parseInt(val);return true;
+		} catch (Exception e) {}
 
         return false;
     }
