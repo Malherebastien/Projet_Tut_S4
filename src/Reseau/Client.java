@@ -51,7 +51,7 @@ public class Client
             indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
 
             System.out.println("1-Bonjour " + nom);
-            System.out.println("Vous etes le Joueur " + indJoueur + " (" + msgNumCoul.split(";")[0] + ") " + " attente suite ..." );
+            System.out.println("Vous etes le Joueur " + (indJoueur+1) + " (" + msgNumCoul.split(";")[0] + ") " + " attente suite ..." );
 
             scNom.close();
         } catch (IOException ioe) { ioe.printStackTrace(); }
@@ -68,7 +68,13 @@ public class Client
             {
                 int sig = Integer.parseInt(signal);
 
-                if (sig == 1) System.out.println("01 - La partie va commencer\nMap = " + recevoirMsg());
+                if (sig == 1)
+                {
+                    String map = recevoirMsg(); map.trim();
+                    System.out.println("01 - La partie va commencer\nMap = " + map);
+
+                    initGrille(map);
+                }
 
                 if (sig == 10)
                 {
