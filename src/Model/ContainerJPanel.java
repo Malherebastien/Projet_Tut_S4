@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 /**
  * Représente le conteneur en IHM
+ * (Ensemble de 4 coins boutons)
  *
  * @author Groupe109
  */
