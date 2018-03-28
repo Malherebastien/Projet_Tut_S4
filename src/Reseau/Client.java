@@ -44,11 +44,11 @@ public class Client
             nom = "Name :" + scNom.nextLine();
 
             envoyerMsg(nom);
-            System.out.println(recevoirMsg());
 
             String msgNumCoul = recevoirMsg();
+			System.out.println(msgNumCoul);
 
-            indJoueur = Integer.parseInt(msgNumCoul.split(";")[1]);
+            indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
 
             System.out.println("1-Bonjour " + nom);
             System.out.println("Vous etes le Joueur " + indJoueur + " (" + msgNumCoul.split(";")[0] + ") " + " attente suite ..." );
@@ -62,6 +62,7 @@ public class Client
 		while (true)
 		{
             String signal = recevoirMsg();
+            System.out.println(signal);
 
             if (estEntier(signal))
             {

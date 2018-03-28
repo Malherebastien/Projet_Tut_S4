@@ -19,6 +19,7 @@ public class Serveur
 	private DatagramSocket ds;
 	private int nbCol, nbLigne;
 	private PartieConsole partie;
+	private String signal;
 
 	public Serveur ()
 	{
@@ -58,21 +59,20 @@ public class Serveur
 
 				String msgRecu = new String(msg.getData());
 				System.out.println("message Recu : " + msgRecu);
-				String signal;
+				signal = "";
 
 				if ( msgRecu.contains("Name :") && nombreJoueur < 2)
 				{
 					String couleurJ = tabCouleur[nombreJoueur];
 					String codeCouleurJ = tabCodeCouleur[nombreJoueur];
 
-					signal = "Bonjour " + msgRecu.substring(6);
-					String numJ = "" + (nombreJoueur+1);
-					envoyerMsg(signal, msg);
+					//signal = "Bonjour " + msgRecu.substring(6);
+					//String numJ = "" + nombreJoueur;
+					//envoyerMsg(signal, msg);
 
-					String msgInfoJoueur = couleurJ + ";" + numJ;
+					String msgInfoJoueur = couleurJ + ";" + (nombreJoueur+1) +";";
 
 					envoyerMsg(msgInfoJoueur, msg);
-					//envoyerMsg(couleurJ, msg);
 
 					tabNomJ[nombreJoueur] = msgRecu.substring(6);
 					tabClient[nombreJoueur] = msg;
@@ -81,128 +81,198 @@ public class Serveur
 				}
 				if ( nombreJoueur == 2 )
 				{
+					System.out.println("bite");
 					if ( !partieCommencerBok )
 					{
+						System.out.println("debut partie");
 						partieCommencerBok = true;
 
-						nbLigne = (int) (Math.random() * 5) + 4;
-						nbCol   = (int) (Math.random() * 5) + 4;
+						initPartie();
+						System.out.println("init");
+						String map = preparerMap();
+						System.out.println("creation map");
+						System.out.println(map);
 
-						partie = new PartieConsole(nbLigne, nbCol, nombreJoueur);
-						PartieConsole.joueurs[0].setNom(tabNomJ[0]);
-						PartieConsole.joueurs[1].setNom(tabNomJ[1]);
-						tabJoueur[0] = PartieConsole.joueurs[0];
-						tabJoueur[1] = PartieConsole.joueurs[1];
-
-						/*for (int i = 0; i < nombreJoueur; i++)
-						{
-							envoyerMsg(partie.afficherTableauContainer(nbCol, nbLigne), tabClient[i]); //affiche tab
-						}*/
-
-						String map = "";
-						for ( int i = 0; i < nbLigne; i ++)
-						{
-							for ( int j = 0; j < nbCol; j++)
-							{
-								map += partie.getContainer(i,j);
-								map += ":";
-							}
-							map += "|";
-						}
-						signal = "01";
-						for (int i = 0; i < nombreJoueur; i++)
-						{
-							envoyerMsg(signal, tabClient[i] );
-							envoyerMsg(map, tabClient[i]);
-						}
-
+						signal01(map);
+						System.out.println("envoie map");
 					}
 					else
 					{
+						System.out.println("debut jeu");
+						boolean joueurPeutJouer = true;
 
-						//fin du jeu
-						signal = "88";
-						if ( tabJoueur[0].getNbTwistLock() == 0 && tabJoueur[1].getNbTwistLock() == 0)
+						//test si fin du jeu
+						signal88();
+
+						// test si le joueur courant a des TwistLock, sinon passe son tour
+						joueurPeutJouer = signal50();
+
+						while ( joueurPeutJouer )
 						{
-							envoyerMsg(signal, tabClient[0]);
-							envoyerMsg(signal, tabClient[1]);
-						}
+							//faire l'attente du client qui n'est pas le joueur courany
+							signal20();
 
-						// si le joueur courant n'a plus de TwistLock alors on passe son tour
-						signal = "50";
-						if ( partie.getJoueurActif() == tabJoueur[0] && tabJoueur[0].getNbTwistLock() == 0)
-						{
-							envoyerMsg(signal, tabClient[0] );
-							continue;
-						}
-						if ( partie.getJoueurActif() == tabJoueur[1] && tabJoueur[1].getNbTwistLock() == 0)
-						{
-							envoyerMsg(signal, tabClient[1] );
-							continue;
-						}
-
-						while ( true )
-						{
-							signal = "20"; //attente
-							// recois le joueur actif, et le joueur actif recoi le message suivant
-							if (partie.getJoueurActif() != tabJoueur[0])
-							{
-								envoyerMsg(signal, tabClient[0]);
-							} else
-							{
-								envoyerMsg(signal, tabClient[1]);
-							}
-
-
-							signal = "10"; //a vous de jouer
-							if (partie.getJoueurActif() == tabJoueur[0])
-							{
-								envoyerMsg(signal, tabClient[0]);
-							}
-							else
-							{
-								envoyerMsg(signal, tabClient[1]);
-							}
+							//fait jouer le joueur courant
+							signal10();
 
 							String coordonnees = recevoirMsg();
-							if (!verifCoord(coordonnees)) //test erreur coord
-							{
-								if (partie.getJoueurActif() == tabJoueur[0])
-								{
-									signal = "21";
-									envoyerMsg(signal, tabClient[0]);
-								} else
-								{
-									signal = "22";
-									envoyerMsg(signal, tabClient[1]);
-								}
-
-							}
+							//test erreur coord
+							if (!verifCoord(coordonnees)) { signalErreur();	}
 							else
 							{
 								//envoie resultat du joueur courant
-								signal = coordonnees;
-								if (partie.getJoueurActif() != tabJoueur[0])
-								{
-									envoyerMsg(signal, tabClient[0]);
-								} else
-								{
-									envoyerMsg(signal, tabClient[1]);
-								}
-								break;
+								signalCoord(coordonnees);
+								break; // pour sortir de boucle
 							}
 
 						}
+						partie.changeJoueurActif();
 
 					}
 
 				}
 
+
 			}
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
 
+	private void signal01(String map)
+	{
+		try{
+			for (int i = 0; i < tabJoueur.length; i++)
+			{
+				signal = "1";
+				envoyerMsg(signal, tabClient[i] );
+				envoyerMsg(map, tabClient[i]);
+			}
+		}catch (IOException ioe){ioe.printStackTrace();}
+	}
 
+	private void signal88()
+	{
+		try {
+			if (tabJoueur[0].getNbTwistLock() == 0 && tabJoueur[1].getNbTwistLock() == 0)
+			{
+				signal = "88";
+				envoyerMsg(signal, tabClient[0]);
+				envoyerMsg(signal, tabClient[1]);
+			}
+		}catch (IOException ioe){ ioe.printStackTrace();}
+	}
+
+	private boolean signal50()
+	{
+		boolean joueurPeutJouer = true;
+		try {
+			for ( int i = 0; i < tabJoueur.length; i++ )
+			{
+				if (partie.getJoueurActif() == tabJoueur[i] && tabJoueur[i].getNbTwistLock() == 0)
+				{
+					signal = "50";
+					envoyerMsg(signal, tabClient[i]);
+					joueurPeutJouer = false;
+				}
+			}
+		}catch (IOException ioe){ ioe.printStackTrace();}
+		return joueurPeutJouer;
+	}
+
+	private void signal20()
+	{
+		try {
+			// recois le joueur actif, et le joueur actif recois le message suivant
+			for ( int i = 0; i < tabJoueur.length; i++ )
+			{
+				if ( partie.getJoueurActif() != tabJoueur[i]) { signal = "20"; envoyerMsg(signal, tabClient[i]); }
+			}
+		}catch (IOException ioe){ ioe.printStackTrace();}
+
+	}
+
+	private void signal10()
+	{
+		try {
+			for ( int i = 0; i <tabJoueur.length; i++)
+			{
+				if (partie.getJoueurActif() == tabJoueur[i])
+				{
+					signal = "10"; //a vous de jouer
+					envoyerMsg(signal, tabClient[i]);
+				}
+			}
+
+		}catch (IOException ioe){ ioe.printStackTrace();}
+	}
+
+	private void signalErreur()
+	{
+		try {
+
+			if (partie.getJoueurActif() == tabJoueur[0])
+			{
+				signal = "21";
+				envoyerMsg(signal, tabClient[0]);
+				signal = "22";
+				envoyerMsg(signal, tabClient[1]);
+			}
+			else
+			{
+				signal = "21";
+				envoyerMsg(signal, tabClient[1]);
+				signal = "22";
+				envoyerMsg(signal, tabClient[0]);
+			}
+
+
+		}catch (IOException ioe) { ioe.printStackTrace(); }
+
+	}
+
+	private void signalCoord(String coordonnees)
+	{
+		try {
+			for ( int i = 0; i < tabJoueur.length; i++)
+			{
+				if ( partie.getJoueurActif() != tabJoueur[i])
+				{
+					signal = coordonnees;
+					envoyerMsg(signal, tabClient[i]);
+				}
+			}
+
+		}catch (IOException ioe){ ioe.printStackTrace(); }
+	}
+
+	public void initPartie()
+	{
+		nbLigne = (int) (Math.random() * 5) + 4;
+		nbCol   = (int) (Math.random() * 5) + 4;
+
+		partie = new PartieConsole(nbLigne, nbCol, nombreJoueur);
+
+		PartieConsole.joueurs[0].setNom(tabNomJ[0]);
+		PartieConsole.joueurs[1].setNom(tabNomJ[1]);
+
+		tabJoueur[0] = PartieConsole.joueurs[0];
+		tabJoueur[1] = PartieConsole.joueurs[1];
+
+	}
+
+	public String preparerMap ()
+	{
+		String map = "";
+		for ( int i = 0; i < nbLigne; i ++)
+		{
+			for ( int j = 0; j < nbCol; j++)
+			{
+				map += partie.getContainer(i,j);
+				map += ":";
+			}
+			map += "|";
+		}
+		return map;
+	}
 
 	private boolean verifCoord(String coord)
 	{

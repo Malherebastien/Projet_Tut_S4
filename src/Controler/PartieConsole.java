@@ -137,17 +137,24 @@ public class PartieConsole
 			else
 				System.out.println("Plus de TwistLocks ! Joueur suivant.");
 
-			for (int i = 0 ; i < this.nbJoueurs ; i++)
-				if (this.joueurActif == PartieConsole.joueurs[i])
-				{
-					if (i == this.nbJoueurs-1) this.joueurActif = PartieConsole.joueurs[0];
-					else                       this.joueurActif = PartieConsole.joueurs[i+1];
-
-					break;
-				}
+			changeJoueurActif();
 		}
 
 		System.out.println(afficherFinPartie());
+	}
+
+	public void changeJoueurActif()
+	{
+		for (int i = 0 ; i < this.nbJoueurs ; i++)
+		{
+			if (this.joueurActif == PartieConsole.joueurs[i])
+			{
+				if (i == this.nbJoueurs - 1) this.joueurActif = PartieConsole.joueurs[0];
+				else this.joueurActif = PartieConsole.joueurs[i + 1];
+
+				break;
+			}
+		}
 	}
 
     /**
