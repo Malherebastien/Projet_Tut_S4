@@ -1,6 +1,7 @@
 package Reseau;
 
-import Controler.PartieConsole;
+import Model.Coin;
+import Model.Container;
 import Model.Joueur;
 
 import java.io.IOException;
@@ -9,16 +10,18 @@ import java.net.*;
 public class Serveur
 {
 
+	private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m" };
+
+	private Container[][] tabContainer;
+	private Coin[][]      tabCoin;
+
+	private static Joueur[] joueurs;
 	private DatagramPacket [] tabClient;
 	private boolean partieCommencerBok;
 	private int nombreJoueur;
 	private String [] tabNomJ;
-	private String [] tabCouleur;
-	private String [] tabCodeCouleur;
-	private Joueur [] tabJoueur;
 	private DatagramSocket ds;
 	private int nbCol, nbLigne;
-	private PartieConsole partie;
 	private String signal;
 	private Joueur joueurActif;
 
@@ -30,15 +33,6 @@ public class Serveur
 
 		tabNomJ = new String[2];
 		tabClient = new DatagramPacket[2];
-		tabJoueur = new Joueur[2];
-
-		tabCouleur = new String[2];
-		tabCouleur[0] = "ROUGE";
-		tabCouleur[1] = "VERT";
-
-		tabCodeCouleur = new String[2];
-		tabCodeCouleur[0] = "#f00";
-		tabCodeCouleur[1] = "0f0";
 
 		lancerServeur();
 	}
@@ -60,8 +54,7 @@ public class Serveur
 
 				if ( msgRecu.contains("Name :") && nombreJoueur < 2)
 				{
-					String couleurJ = tabCouleur[nombreJoueur];
-					String codeCouleurJ = tabCodeCouleur[nombreJoueur];
+					String couleurJ = COULEURS[nombreJoueur].split(";")[0];
 
 					String msgInfoJoueur = couleurJ + ";" + nombreJoueur + ";";
 
@@ -85,6 +78,7 @@ public class Serveur
 						String map = preparerMap();
 						System.out.println("creation map");
 						System.out.println(map);
+						initGrille(map);
 
 						signal01(map);
 						System.out.println("envoie map");
@@ -120,7 +114,7 @@ public class Serveur
 							}
 
 						}
-						partie.changeJoueurActif();
+						changeJoueurActif();
 
 					}
 
@@ -130,10 +124,50 @@ public class Serveur
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
 
+	private void initGrille(String map)
+	{
+		joueurs = new Joueur[] { new Joueur(COULEURS[0].split(";")[0], COULEURS[0].split(";")[1]),
+				                 new Joueur(COULEURS[1].split(";")[1], COULEURS[1].split(";")[1]) };
+
+		joueurs[0].setNom(tabNomJ[0]);
+		joueurs[1].setNom(tabNomJ[1]);
+
+		joueurActif = joueurs[0];
+
+		//nbLigne = map.split("|").length;
+		//nbCol = map.split("|")[0].split(":").length;
+
+		tabCoin = new Coin[nbLigne+1][nbCol+1];
+
+		for (int i = 0; i < nbLigne+1; i++)
+			for (int j = 0; j < nbCol+1; j++)
+				tabCoin[i][j] = new Coin();
+
+		tabContainer = new Container[nbLigne][nbCol];
+
+		for (int i = 0 ; i < nbLigne ; i++)
+		{
+			String ligne = map.split("|")[i];
+
+			for (int j = 0 ; j < nbCol ; j++)
+				tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);
+		}
+	}
+
+	private Container initCoinsContainer(Container c, int lig, int col)
+	{
+		c.addCoin(this.tabCoin[lig][col]); //Haut gauche
+		c.addCoin(this.tabCoin[lig][col+1]); //Haut droite
+		c.addCoin(this.tabCoin[lig+1][col+1]); //Bas droite
+		c.addCoin(this.tabCoin[lig+1][col]); // Bas gauche
+
+		return c;
+	}
+
 	private void signal01(String map)
 	{
 		try{
-			for (int i = 0; i < tabJoueur.length; i++)
+			for (int i = 0; i < joueurs.length; i++)
 			{
 				signal = "1";
 				envoyerMsg(signal, tabClient[i] );
@@ -145,7 +179,7 @@ public class Serveur
 	private void signal88()
 	{
 		try {
-			if (tabJoueur[0].getNbTwistLock() == 0 && tabJoueur[1].getNbTwistLock() == 0)
+			if (joueurs[0].getNbTwistLock() == 0 && joueurs[1].getNbTwistLock() == 0)
 			{
 				signal = "88";
 				envoyerMsg(signal, tabClient[0]);
@@ -158,9 +192,9 @@ public class Serveur
 	{
 		boolean joueurPeutJouer = true;
 		try {
-			for ( int i = 0; i < tabJoueur.length; i++ )
+			for ( int i = 0; i < joueurs.length; i++ )
 			{
-				if (partie.getJoueurActif() == tabJoueur[i] && tabJoueur[i].getNbTwistLock() == 0)
+				if (getJoueurActif() == joueurs[i] && joueurs[i].getNbTwistLock() == 0)
 				{
 					signal = "50";
 					envoyerMsg(signal, tabClient[i]);
@@ -175,9 +209,9 @@ public class Serveur
 	{
 		try {
 			// recois le joueur actif, et le joueur actif recois le message suivant
-			for ( int i = 0; i < tabJoueur.length; i++ )
+			for ( int i = 0; i < joueurs.length; i++ )
 			{
-				if ( partie.getJoueurActif() != tabJoueur[i]) { signal = "20"; envoyerMsg(signal, tabClient[i]); }
+				if ( getJoueurActif() != joueurs[i]) { signal = "20"; envoyerMsg(signal, tabClient[i]); }
 			}
 		}catch (IOException ioe){ ioe.printStackTrace();}
 
@@ -186,9 +220,9 @@ public class Serveur
 	private void signal10()
 	{
 		try {
-			for ( int i = 0; i <tabJoueur.length; i++)
+			for ( int i = 0; i < joueurs.length; i++)
 			{
-				if (partie.getJoueurActif() == tabJoueur[i])
+				if (getJoueurActif() == joueurs[i])
 				{
 					signal = "10"; //a vous de jouer
 					envoyerMsg(signal, tabClient[i]);
@@ -202,7 +236,7 @@ public class Serveur
 	{
 		try {
 
-			if (partie.getJoueurActif() == tabJoueur[0])
+			if (getJoueurActif() == joueurs[0])
 			{
 				signal = "21";
 				envoyerMsg(signal, tabClient[0]);
@@ -225,9 +259,9 @@ public class Serveur
 	private void signalCoord(String coordonnees)
 	{
 		try {
-			for ( int i = 0; i < tabJoueur.length; i++)
+			for ( int i = 0; i < joueurs.length; i++)
 			{
-				if ( partie.getJoueurActif() != tabJoueur[i])
+				if ( getJoueurActif() != joueurs[i])
 				{
 					signal = coordonnees;
 					envoyerMsg(signal, tabClient[i]);
@@ -237,19 +271,27 @@ public class Serveur
 		}catch (IOException ioe){ ioe.printStackTrace(); }
 	}
 
+	public Joueur getJoueurActif() { return this.joueurActif;}
+
 	public void initPartie()
 	{
 		nbLigne = (int) (Math.random() * 5) + 4;
 		nbCol   = (int) (Math.random() * 5) + 4;
 
-		partie = new PartieConsole(nbLigne, nbCol, nombreJoueur);
+	}
 
-		PartieConsole.joueurs[0].setNom(tabNomJ[0]);
-		PartieConsole.joueurs[1].setNom(tabNomJ[1]);
+	public void changeJoueurActif()
+	{
+		for (int i = 0 ; i < joueurs.length ; i++)
+		{
+			if (this.joueurActif == joueurs[i])
+			{
+				if (i == joueurs.length - 1) this.joueurActif = joueurs[0];
+				else this.joueurActif = joueurs[i + 1];
 
-		tabJoueur[0] = PartieConsole.joueurs[0];
-		tabJoueur[1] = PartieConsole.joueurs[1];
-
+				break;
+			}
+		}
 	}
 
 	public String preparerMap ()
