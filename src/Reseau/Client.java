@@ -62,7 +62,7 @@ public class Client
 		while (true)
 		{
             String signal = recevoirMsg();
-            signal = signal.trim();
+            signal = signal.trim(); // enleve tout espace
 
            	if (estEntier(signal))
             {
