@@ -43,7 +43,7 @@ public class Coin
     /**
      * Vérifie si un coin est occupé
      *
-     * @return
+     * @return occupe
      */
     public boolean isOccupe()
     {
@@ -63,7 +63,7 @@ public class Coin
     /**
      * Méthode de mise en forme de la classe Coin
      *
-     * @return
+     * @return String
      */
     public String toString()
     {

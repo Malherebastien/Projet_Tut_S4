@@ -4,30 +4,51 @@ import Controler.PartieConsole;
 
 import java.util.HashMap;
 
-public class Container
-{//
-    private int valeur; //Aléatoire entre 5 et 54
+/**
+ * Représente les conteneurs
+ *
+ * @author Groupe109
+ */
 
-    private Joueur proprietaire; //Le joueur qui possède le container. null si non possédé ou inégalité.
+public class Container
+{
+    private int valeur;             // Aléatoire entre 5 et 54
+
+    private Joueur proprietaire;    // Le joueur qui possède le container. null si non possédé ou inégalité.
 
     private Coin[] coins;
-    private int nbCoins; //Nombre de coins remplis
+    private int nbCoins;            // Nombre de coins remplis
 
+    /**
+     * Constructeur de la classe Container
+     * Initialise un tableau de 4 coins pour chaque conteneur
+     *
+     * @param valeur
+     */
     public Container(int valeur)
     {
         this.valeur = valeur;
         this.proprietaire = null;
 
         this.coins = new Coin[4];
-        this.nbCoins = 0; //Sert juste à mettre les coins dans l'ordre.
+        this.nbCoins = 0;           // Sert juste à mettre les coins dans l'ordre.
     }
 
+    /**
+     * Ajoute un coin au tableau de coins
+     *
+     * @param coin
+     */
     public void addCoin(Coin coin)
     {
         this.coins[nbCoins] = coin;
         this.nbCoins++;
     }
 
+    /**
+     * Modificateur qui appelle lui-même le modificateur setProprietaire
+     * Calcul le score du joueur si non nul
+     */
     public void setScoreJoueur()
     {
         setProprietaire();
@@ -35,16 +56,32 @@ public class Container
             proprietaire.setScore(proprietaire.getScore() + this.valeur);
     }
 
+    /**
+     * Accesseur de coin
+     *
+     * @return coins
+     */
     public Coin[] getCoins()
     {
         return coins;
     }
 
+    /**
+     * Méthode de mise en forme de la classe Container #1
+     * Correspond à la ligne du haut, aux premiers coins
+     *
+     * @return String
+     */
     public String toString1()
     {
         return "----" + this.coins[1].toString();
     }
 
+    /**
+     * Méthode de mise en forme de la classe Container #2
+     *
+     * @return String
+     */
     public String toString2()
     {
         if (proprietaire != null)
@@ -53,26 +90,50 @@ public class Container
         return " " + String.format("%2d",this.valeur) + " |";
     }
 
+    /**
+     * Méthode de mise en forme de la classe Container #3
+     * Correspond à la ligne de bas de l'application, aux derniers coins
+     *
+     * @return String
+     */
     public String toString3()
     {
         return "----" + this.coins[2].toString();
     }
 
+    /**
+     * Accesseur de la variable valeur
+     *
+     * @return valeur
+     */
     public int getValeur()
     {
         return valeur;
     }
 
+    /**
+     * Modificateur de la variable valeur
+     *
+     * @param valeur
+     */
     public void setValeur(int valeur)
     {
         this.valeur = valeur;
     }
 
+    /**
+     * Accesseur du propriétaire
+     *
+     * @return
+     */
     public Joueur getProprietaire()
     {
         return proprietaire;
     }
 
+    /**
+     * Modificateur du propriétaire
+     */
     public void setProprietaire()
     {
         this.proprietaire = null;
