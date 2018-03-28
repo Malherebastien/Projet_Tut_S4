@@ -19,6 +19,7 @@ public class Client
     private Joueur joueurActif;
 
     private int indJoueur;
+    private String nom;
 
     private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m" };
 
@@ -40,36 +41,76 @@ public class Client
     {
         try {
             Scanner scNom = new Scanner(System.in);
-            String msgNom = "Name :" + scNom.nextLine();
+            nom = "Name :" + scNom.nextLine();
 
-            envoyerMsg(msgNom);
+            envoyerMsg(nom);
             System.out.println(recevoirMsg());
 
-            String numJ = recevoirMsg();
+            String msgNumCoul = recevoirMsg();
 
-            indJoueur = Integer.parseInt(numJ)-1;
+            indJoueur = Integer.parseInt(msgNumCoul.split(";")[1]);
 
-            String couleur = recevoirMsg();
+            System.out.println("1-Bonjour " + nom);
+            System.out.println("Vous etes le Joueur " + indJoueur + " (" + msgNumCoul.split(";")[0] + ") " + " attente suite ..." );
 
-            System.out.println( "Vous etes le Joueur " + numJ + " (" + couleur + ") " + " attente suite ..." );
-
-            System.out.println( recevoirMsg() ); // partie commencer
-            System.out.println( recevoirMsg() ); // map
+            scNom.close();
         } catch (IOException ioe) { ioe.printStackTrace(); }
     }
 
 	public void lancerClient() throws IOException
 	{
-		while ( true )
+		while (true)
 		{
-			System.out.println( recevoirMsg() ); // map
-			System.out.println("envoi au serveur chaine :");
-			Scanner sc = new Scanner(System.in);
-			String message = sc.nextLine();
+            String signal = recevoirMsg();
 
-			envoyerMsg(message);
+            if (estEntier(signal))
+            {
+                int sig = Integer.parseInt(signal);
+
+                if (sig == 1) System.out.println("01 - La partie va commencer\nMap = " + recevoirMsg());
+
+                if (sig == 10)
+                {
+                    Scanner sc = new Scanner(System.in);
+
+                    System.out.print("10 - A vous de jouer + (" + joueurs[indJoueur].getCouleur() + ") : ");
+                    envoyerMsg(sc.nextLine());
+
+                    sc.close();
+                }
+
+                if (sig == 20)
+                {
+                    String donnees = recevoirMsg();
+                }
+
+                if (sig == 21) System.out.println("21 - Coup illegal");
+
+                if (sig == 22) System.out.println("22 - Coup adversaire illegal");
+
+                if (sig == 50) System.out.println("50 - Vous ne pouvez plus jouer");
+
+                if (sig == 88)
+                {
+                    int indSec = 0;
+
+                    if (indJoueur == 0) indSec = 1;
+
+                    if (joueurs[indJoueur].getScore() > joueurs[indSec].getScore())
+                        System.out.println("88 - Partie Terminée, Vous avez gagné " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
+                    else
+                        System.out.println("88 - Partie Terminée, Vous avez perdu " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
+                }
+            }
 		}
 	}
+
+	private boolean estEntier(String val)
+    {
+        try { Integer.parseInt(val); return true; } catch (Exception e) {}
+
+        return false;
+    }
 
 	private void envoyerMsg(String msg) throws IOException
 	{
