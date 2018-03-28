@@ -3,10 +3,9 @@ package Model;
 import Controler.PartieConsole;
 
 import java.util.HashMap;
-import java.util.HashMap;
 
 public class Container
-{
+{//
     private int valeur; //Aléatoire entre 5 et 54
 
     private Joueur proprietaire; //Le joueur qui possède le container. null si non possédé ou inégalité.
@@ -56,7 +55,7 @@ public class Container
 
     public String toString3()
     {
-        return "----" + this.coins[3].toString();
+        return "----" + this.coins[2].toString();
     }
 
     public int getValeur()
@@ -80,7 +79,7 @@ public class Container
 
         HashMap<Joueur, Integer> mapJoueur = new HashMap<>();
 
-        for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)
+        for (int i = 0; i < PartieConsole.joueurs.length ; i++)
             mapJoueur.put(PartieConsole.joueurs[i], 0);
 
         for (int i = 0; i < coins.length; i++)
