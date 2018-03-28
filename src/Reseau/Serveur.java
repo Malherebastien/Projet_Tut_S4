@@ -134,9 +134,6 @@ public class Serveur
 
 		joueurActif = joueurs[0];
 
-		//nbLigne = map.split("|").length;
-		//nbCol = map.split("|")[0].split(":").length;
-
 		tabCoin = new Coin[nbLigne+1][nbCol+1];
 
 		for (int i = 0; i < nbLigne+1; i++)
@@ -150,7 +147,7 @@ public class Serveur
 			String ligne = map.split("\\|")[i];
 
 			for (int j = 0 ; j < nbCol ; j++)
-				tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);
+				tabContainer[i][j] = initCoinsContainer(new Container(new Integer(ligne.split(":")[j])), i, j);
 		}
 	}
 

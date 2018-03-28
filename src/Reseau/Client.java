@@ -52,8 +52,6 @@ public class Client
 
             System.out.println("1-Bonjour " + nom);
             System.out.println("Vous etes le Joueur " + (indJoueur+1) + " (" + msgNumCoul.split(";")[0] + "), " + " attente suite ..." );
-
-            scNom.close();
         } catch (IOException ioe) { ioe.printStackTrace(); }
     }
 
@@ -62,7 +60,6 @@ public class Client
 		while (true)
 		{
             String signal = recevoirMsg();
-            signal = signal.trim();
 
            	if (estEntier(signal))
             {
@@ -70,7 +67,7 @@ public class Client
 
                 if (sig == 1)
                 {
-                    String map = recevoirMsg(); map.trim();
+                    String map = recevoirMsg();
                     System.out.println("01 - La partie va commencer\nMap = " + map);
 
                     initGrille(map);
@@ -82,8 +79,6 @@ public class Client
 
 					Scanner sc = new Scanner(System.in);
                     envoyerMsg(sc.nextLine());
-
-                    sc.close();
                 }
 
                 if (sig == 20)
@@ -136,7 +131,7 @@ public class Client
 		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
 		//recois le msg
 		ds.receive(dpMsg);
-		return new String(dpMsg.getData());
+		return new String(dpMsg.getData()).trim();
 	}
 
 	private void initGrille(String map)
@@ -162,7 +157,7 @@ public class Client
             String ligne = map.split("\\|")[i];
 
             for (int j = 0 ; j < nbCol ; j++)
-                tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);
+                tabContainer[i][j] = initCoinsContainer(new Container(new Integer(ligne.split(":")[j])), i, j);
         }
 	}
 
