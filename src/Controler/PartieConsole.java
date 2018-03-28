@@ -77,7 +77,7 @@ public class PartieConsole
 
 			if (this.joueurActif.getNbTwistLock() != 0)
 			{
-				System.out.println(afficherTableauContainer());
+				System.out.println(afficherTableauContainer(nbCol, nbLig));
 
 				String choix;
 				do
@@ -182,7 +182,7 @@ public class PartieConsole
 		return true;
 	}
 
-	private String afficherFinPartie()
+	public String afficherFinPartie()
 	{
 		String sRet = "";
 
@@ -204,7 +204,7 @@ public class PartieConsole
 		return sRet;
 	}
 
-	private String afficherTableauContainer()
+	public String afficherTableauContainer(int nbCol, int nbLig)
 	{
 		String sRet = "";
 
@@ -217,10 +217,10 @@ public class PartieConsole
 
 		for (int i = 0; i < nbLig; i++)
 		{
-			sRet += "   " + this.tabContainer[i][0].getCoins()[0];
+			sRet += "   " + getContainer(i,0).getCoins()[0];
 
 			for (int j = 0 ; j < nbCol ; j++)
-				sRet += this.tabContainer[i][j].toString1();
+				sRet += getContainer(i,j).toString1();
 
 			sRet += "\n";
 
@@ -228,16 +228,16 @@ public class PartieConsole
 			sRet += String.format("%2s",(1 + i)) + " |";
 
 			for (int j = 0 ; j < nbCol ; j++)
-				sRet += this.tabContainer[i][j].toString2();
+				sRet += getContainer(i,j).toString2();
 
 			sRet += "\n";
 
 			if (i == nbLig-1)
 			{
-				sRet += "   " + this.tabContainer[i][3].getCoins()[2];
+				sRet += "   " + getContainer(i,3).getCoins()[2];
 
 				for (int j = 0 ; j < nbCol ; j++)
-					sRet += this.tabContainer[i][j].toString3();
+					sRet += getContainer(i,j).toString3();
 
 				sRet += "\n";
 			}

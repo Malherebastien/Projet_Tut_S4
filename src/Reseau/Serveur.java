@@ -1,6 +1,7 @@
 package Reseau;
 
 import Controler.PartieConsole;
+import Model.Joueur;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,20 +15,20 @@ public class Serveur
 	private String [] tabNomJ;
 	private String [] tabCouleur;
 	private String [] tabCodeCouleur;
+	private Joueur [] tabJoueur;
 	private DatagramSocket ds;
+	private int nbCol, nbLigne;
+	private PartieConsole partie;
 
-	public Serveur () throws IOException
+	public Serveur ()
 	{
-		//crée une Socket au port 2009
-		ds = new DatagramSocket(2009);
-
 		nombreJoueur = 0;
 
 		partieCommencerBok = false;
 
 		tabNomJ = new String[2];
-
 		tabClient = new DatagramPacket[2];
+		tabJoueur = new Joueur[2];
 
 		tabCouleur = new String[4];
 		tabCouleur[0] = "ROUGE";
@@ -44,75 +45,82 @@ public class Serveur
 		lancerServeur();
 	}
 
-	public void lancerServeur() throws IOException
+	public void lancerServeur()
 	{
-		PartieConsole partie;
-		while ( true)
-		{
-			DatagramPacket msg = new DatagramPacket(new byte[512], 512);
-			ds.receive(msg);
+		try {
+			//crée une Socket au port 2009
+			ds = new DatagramSocket(2009);
 
-			String msgRecu = new String(msg.getData());
-			System.out.println("message Recu : " + msgRecu);
-			String texteReponse;
-
-			if ( msgRecu.contains("Name :") && nombreJoueur < 2)
+			while ( true)
 			{
-				String couleurJ = tabCouleur[nombreJoueur];
-				String codeCouleurJ = tabCodeCouleur[nombreJoueur];
-				texteReponse = "Bonjour " + msgRecu.substring(6);
-				String numJ = "" + (nombreJoueur+1);
+				DatagramPacket msg = new DatagramPacket(new byte[512], 512);
+				ds.receive(msg);
 
-				envoyerMsg(texteReponse, msg);
-				envoyerMsg(numJ, msg);
-				envoyerMsg(couleurJ, msg);
+				String msgRecu = new String(msg.getData());
+				System.out.println("message Recu : " + msgRecu);
+				String texteReponse;
 
-				tabNomJ[nombreJoueur] = msgRecu.substring(6);
-				tabClient[nombreJoueur] = msg;
-				nombreJoueur ++;
-
-			}
-			if ( nombreJoueur == 2 )
-			{
-				if ( !partieCommencerBok )
+				if ( msgRecu.contains("Name :") && nombreJoueur < 2)
 				{
-					partieCommencerBok = true;
-					String partieCommence = "La partie va commencer";
+					String couleurJ = tabCouleur[nombreJoueur];
+					String codeCouleurJ = tabCodeCouleur[nombreJoueur];
+					texteReponse = "Bonjour " + msgRecu.substring(6);
+					String numJ = "" + (nombreJoueur+1);
 
-					for (int i = 0; i < nombreJoueur; i++)
+					envoyerMsg(texteReponse, msg);
+					envoyerMsg(numJ, msg);
+					envoyerMsg(couleurJ, msg);
+
+					tabNomJ[nombreJoueur] = msgRecu.substring(6);
+					tabClient[nombreJoueur] = msg;
+					nombreJoueur ++;
+
+				}
+				if ( nombreJoueur == 2 )
+				{
+					if ( !partieCommencerBok )
 					{
-						envoyerMsg(partieCommence, tabClient[i] );
-					}
+						partieCommencerBok = true;
+						texteReponse = "La partie va commencer";
 
-					int nbLigne = (int) (Math.random() * 9) + 4;
-					int nbCol   = (int) (Math.random() * 9) + 4;
-
-					partie = new PartieConsole(nbLigne, nbCol, nombreJoueur);
-					PartieConsole.joueurs[0].setNom(tabNomJ[0]);
-					PartieConsole.joueurs[1].setNom(tabNomJ[1]);
-
-					String map = "MAP=\n";
-					for (int i = 0; i < nbLigne; i++)
-					{
-						for (int j = 0; j < nbCol; j++)
+						for (int i = 0; i < nombreJoueur; i++)
 						{
-							map += partie.getContainer(i, j).getValeur();
-							map += ":";
+							envoyerMsg(texteReponse, tabClient[i] );
 						}
-						map += "|\n";
-					}
 
-					for (int i = 0; i < nombreJoueur; i++)
-					{
-						envoyerMsg(map, tabClient[i] );
+						nbLigne = (int) (Math.random() * 5) + 4;
+						nbCol   = (int) (Math.random() * 5) + 4;
+
+						partie = new PartieConsole(nbLigne, nbCol, nombreJoueur);
+						PartieConsole.joueurs[0].setNom(tabNomJ[0]);
+						PartieConsole.joueurs[1].setNom(tabNomJ[1]);
+						tabJoueur[0] = PartieConsole.joueurs[0];
+						tabJoueur[1] = PartieConsole.joueurs[1];
+
+						for (int i = 0; i < nombreJoueur; i++)
+						{
+							envoyerMsg(partie.afficherTableauContainer(nbCol, nbLigne), tabClient[i]);//affiche tab
+						}
+
+						// recois le joueur actif, et le joueur actif recoi le message suivant
+						for (int i = 0; i < tabJoueur.length; i++)
+						{
+							if ( partie.getJoueurActif()== tabJoueur[i] )
+							{
+								texteReponse = "A vous de Jouer " + tabJoueur[i].getCouleur();
+								envoyerMsg(texteReponse, tabClient[i]);
+							}
+						}
+
 					}
 
 				}
 
 			}
-
-		}
+		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
+
+
 
 	private void envoyerMsg(String msg, DatagramPacket dpReceveurMessage) throws IOException
 	{

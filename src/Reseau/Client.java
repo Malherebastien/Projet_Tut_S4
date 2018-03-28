@@ -26,8 +26,8 @@ public class Client
 
 		System.out.println( "Vous etes le Joueur " + cpt + " (" + couleur + ") " + " attente suite ..." );
 
-		System.out.println( recevoirMsg() );
-		System.out.println( recevoirMsg() );
+		System.out.println( recevoirMsg() ); // partie commencer
+		System.out.println( recevoirMsg() ); // map
 
 		lancerClient();
 
@@ -37,6 +37,8 @@ public class Client
 	{
 		while ( true )
 		{
+			System.out.println( recevoirMsg() ); // map
+			System.out.println("envoi au serveur chaine :");
 			Scanner sc = new Scanner(System.in);
 			String message = sc.nextLine();
 
@@ -65,4 +67,6 @@ public class Client
 		ds.receive(dpMsg);
 		return new String(dpMsg.getData());
 	}
+
+
 }
