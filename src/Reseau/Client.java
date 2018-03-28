@@ -41,7 +41,7 @@ public class Client
     {
         try {
             Scanner scNom = new Scanner(System.in);
-            nom = "Name :" + scNom.nextLine();
+            nom = " Name : " + scNom.nextLine();
 
             envoyerMsg(nom);
 
@@ -51,7 +51,7 @@ public class Client
             indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
 
             System.out.println("1-Bonjour " + nom);
-            System.out.println("Vous etes le Joueur " + (indJoueur+1) + " (" + msgNumCoul.split(";")[0] + ") " + " attente suite ..." );
+            System.out.println("Vous etes le Joueur " + (indJoueur+1) + " (" + msgNumCoul.split(";")[0] + "), " + " attente suite ..." );
 
             scNom.close();
         } catch (IOException ioe) { ioe.printStackTrace(); }
@@ -146,8 +146,8 @@ public class Client
 
 	    joueurActif = joueurs[0];
 
-	    nbLig = map.split("|").length;
-	    nbCol = map.split("|")[0].split(":").length;
+	    nbLig = map.split("|").length; System.out.println("nbCol : " + nbLig);
+	    nbCol = map.split("|")[0].split(":").length; System.out.println("nbLig : " + nbLig);
 
         tabCoin = new Coin[nbLig+1][nbCol+1];
 
@@ -160,6 +160,8 @@ public class Client
 		for (int i = 0 ; i < nbLig ; i++)
         {
             String ligne = map.split("|")[i];
+
+            System.out.println("Ligne : " + ligne);
 
             for (int j = 0 ; j < nbCol ; j++)
                 tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);
