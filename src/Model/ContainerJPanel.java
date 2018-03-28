@@ -8,9 +8,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * Représente le conteneur en IHM
+ *
+ * @author Groupe109
+ */
+
 public class ContainerJPanel extends JPanel implements ActionListener {
     private ArrayList <CoinButton> alCoinButton   = new ArrayList<CoinButton>();
     Tablier tablier;
+
+    /**
+     * Constructeur de la classe
+     * Initialise les différents élements de l'interface concernant un conteneur
+     *
+     * @param tablier
+     */
     public ContainerJPanel(Tablier tablier)
     {
         this.tablier = tablier;
@@ -46,6 +59,13 @@ public class ContainerJPanel extends JPanel implements ActionListener {
         this.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
         this.setVisible(true);
     }
+
+    /**
+     * Retourne un CoinButton
+     *
+     * @param id
+     * @return
+     */
     public CoinButton getCoinButton( int id )
     {
         try
@@ -59,8 +79,15 @@ public class ContainerJPanel extends JPanel implements ActionListener {
         return null;
     }
 
+    /**
+     * Intercepte les actions de l'utilisateur
+     * pour colorer un rond
+     *
+     * @param e
+     */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e)
+    {
         Object source = e.getSource();
         if (source instanceof CoinButton)
         {
