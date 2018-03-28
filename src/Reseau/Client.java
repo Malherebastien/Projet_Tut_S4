@@ -1,5 +1,6 @@
 package Reseau;
 
+import Model.Container;
 import Model.Joueur;
 
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.util.Scanner;
 public class Client
 {
 	private DatagramSocket ds;
+
+	private Container[][] tabContainer;
 
 	public Client() throws IOException
 	{
@@ -66,6 +69,66 @@ public class Client
 		//recois le msg
 		ds.receive(dpMsg);
 		return new String(dpMsg.getData());
+	}
+
+	public void initGrille(String map)
+	{
+		tabContainer = new Container[map.split("|").length][map.split("|")[0].split(":").length];
+
+		for (String ligne : map.split("|"))
+		{
+			for (String col : ligne.split(":"))
+			{
+
+			}
+		}
+	}
+
+	public void majGrille()
+	{
+
+	}
+
+	public String afficherGrille()
+	{
+		String sRet = "";
+
+		sRet += "    ";
+
+		char col = 'A';
+		while(col <= 64+nbCol) sRet += "  " + col++ + "  ";
+
+		sRet +="\n";
+
+		for (int i = 0; i < nbLig; i++)
+		{
+			sRet += "   " + getContainer(i,0).getCoins()[0];
+
+			for (int j = 0 ; j < nbCol ; j++)
+				sRet += getContainer(i,j).toString1();
+
+			sRet += "\n";
+
+
+			sRet += String.format("%2s",(1 + i)) + " |";
+
+			for (int j = 0 ; j < nbCol ; j++)
+				sRet += getContainer(i,j).toString2();
+
+			sRet += "\n";
+
+			if (i == nbLig-1)
+			{
+				sRet += "   " + getContainer(i,3).getCoins()[2];
+
+				for (int j = 0 ; j < nbCol ; j++)
+					sRet += getContainer(i,j).toString3();
+
+				sRet += "\n";
+			}
+		}
+
+		return sRet;
 	}
 
 
