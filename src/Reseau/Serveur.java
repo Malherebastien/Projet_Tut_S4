@@ -52,7 +52,7 @@ public class Serveur
 			//crée une Socket au port 2009
 			ds = new DatagramSocket(2009);
 
-			while ( true)
+			while (true)
 			{
 				DatagramPacket msg = new DatagramPacket(new byte[512], 512);
 				ds.receive(msg);
@@ -266,7 +266,7 @@ public class Serveur
 		{
 			for ( int j = 0; j < nbCol; j++)
 			{
-				map += partie.getContainer(i,j);
+				map += (int) (Math.random()*50) + 5;
 				map += ":";
 			}
 			map += "|";
