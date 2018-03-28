@@ -1,40 +1,62 @@
 package Reseau;
 
+import Controler.PartieConsole;
+import Model.Coin;
 import Model.Container;
 import Model.Joueur;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 
 public class Client
 {
 	private DatagramSocket ds;
 
+    private static Joueur[] joueurs;
+
+    private Joueur joueurActif;
+
+    private int indJoueur;
+
+    private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m" };
+
 	private Container[][] tabContainer;
+	private Coin[][]      tabCoin;
+
+	private int nbLig;
+	private int nbCol;
 
 	public Client() throws IOException
 	{
 		ds = new DatagramSocket(); // connecte le client
 
-		Scanner scNom = new Scanner(System.in);
-		String msgNom = "Name :" + scNom.nextLine();
-
-		envoyerMsg(msgNom);
-		System.out.println(recevoirMsg());
-
-		String cpt = recevoirMsg();
-
-		String couleur = recevoirMsg();
-
-		System.out.println( "Vous etes le Joueur " + cpt + " (" + couleur + ") " + " attente suite ..." );
-
-		System.out.println( recevoirMsg() ); // partie commencer
-		System.out.println( recevoirMsg() ); // map
-
+        initClient();
 		lancerClient();
-
 	}
+
+	private void initClient()
+    {
+        try {
+            Scanner scNom = new Scanner(System.in);
+            String msgNom = "Name :" + scNom.nextLine();
+
+            envoyerMsg(msgNom);
+            System.out.println(recevoirMsg());
+
+            String numJ = recevoirMsg();
+
+            indJoueur = Integer.parseInt(numJ)-1;
+
+            String couleur = recevoirMsg();
+
+            System.out.println( "Vous etes le Joueur " + numJ + " (" + couleur + ") " + " attente suite ..." );
+
+            System.out.println( recevoirMsg() ); // partie commencer
+            System.out.println( recevoirMsg() ); // map
+        } catch (IOException ioe) { ioe.printStackTrace(); }
+    }
 
 	public void lancerClient() throws IOException
 	{
@@ -47,11 +69,6 @@ public class Client
 
 			envoyerMsg(message);
 		}
-	}
-
-	public static void main (String args[]) throws Exception
-	{
-		new Client();
 	}
 
 	private void envoyerMsg(String msg) throws IOException
@@ -71,25 +88,74 @@ public class Client
 		return new String(dpMsg.getData());
 	}
 
-	public void initGrille(String map)
+	private void initGrille(String map)
 	{
-		tabContainer = new Container[map.split("|").length][map.split("|")[0].split(":").length];
+	    joueurs = new Joueur[] { new Joueur(COULEURS[0].split(";")[0], COULEURS[0].split(";")[1]),
+	                             new Joueur(COULEURS[1].split(";")[1], COULEURS[1].split(";")[1]) };
 
-		for (String ligne : map.split("|"))
-		{
-			for (String col : ligne.split(":"))
-			{
+	    joueurActif = joueurs[0];
 
-			}
-		}
+	    nbLig = map.split("|").length;
+	    nbCol = map.split("|")[0].split(":").length;
+
+        tabCoin = new Coin[nbLig+1][nbCol+1];
+
+        for (int i = 0; i < nbLig+1; i++)
+            for (int j = 0; j < nbCol+1; j++)
+                tabCoin[i][j] = new Coin();
+
+		tabContainer = new Container[nbLig][nbCol];
+
+		for (int i = 0 ; i < nbLig ; i++)
+        {
+            String ligne = map.split("|")[i];
+
+            for (int j = 0 ; j < nbCol ; j++)
+                tabContainer[i][j] = initCoinsContainer(new Container(Integer.parseInt(ligne.split(":")[j])), i, j);
+        }
 	}
 
-	public void majGrille()
-	{
+	private Container initCoinsContainer(Container c, int lig, int col)
+    {
+        c.addCoin(this.tabCoin[lig][col]); //Haut gauche
+        c.addCoin(this.tabCoin[lig][col+1]); //Haut droite
+        c.addCoin(this.tabCoin[lig+1][col+1]); //Bas droite
+        c.addCoin(this.tabCoin[lig+1][col]); // Bas gauche
 
+        return c;
+    }
+
+	private void majGrille(String valPos)
+	{
+        int coin = Integer.parseInt(valPos.substring(valPos.length()-1, valPos.length()));
+
+        String coord = valPos.substring(0,valPos.length()-1);
+
+        int lig = Integer.parseInt(valPos.substring(0, coord.length()-1));
+        int col = Character.toUpperCase(coord.charAt(coord.length()-1))-65;
+
+        if (!tabContainer[lig-1][col].getCoins()[coin-1].isOccupe())
+        {
+            this.tabContainer[lig-1][col].getCoins()[coin-1].setOccupant(joueurActif);
+            // -64 pour les lettres et -1 pour le tableau
+
+            // Parcours des joueurs pour remettres leurs points à 0 avant de fair eune nouvelle affectation
+            for (int i = 0; i < PartieConsole.joueurs.length ; i++)
+                PartieConsole.joueurs[i].setScore(0);
+
+            // Parcours des containers pour mettre les points aux joueurs
+            for (int i = 0; i < nbLig; i++)
+                for (int j = 0; j < nbCol; j++)
+                    this.tabContainer[i][j].setScoreJoueur();
+        } else
+        {
+            System.out.println("Mouvement impossible, pénalité d'un TwistLock");
+            if (this.joueurActif.getNbTwistLock() != 0)
+                this.joueurActif.setNbTwistLock(this.joueurActif.getNbTwistLock() - 1);
+        }
 	}
 
-	public String afficherGrille()
+	private String afficherGrille()
 	{
 		String sRet = "";
 
@@ -102,10 +168,10 @@ public class Client
 
 		for (int i = 0; i < nbLig; i++)
 		{
-			sRet += "   " + getContainer(i,0).getCoins()[0];
+			sRet += "   " + tabContainer[i][0].getCoins()[0];
 
 			for (int j = 0 ; j < nbCol ; j++)
-				sRet += getContainer(i,j).toString1();
+				sRet += tabContainer[i][j].toString1();
 
 			sRet += "\n";
 
@@ -113,16 +179,16 @@ public class Client
 			sRet += String.format("%2s",(1 + i)) + " |";
 
 			for (int j = 0 ; j < nbCol ; j++)
-				sRet += getContainer(i,j).toString2();
+				sRet += tabContainer[i][j].toString2();
 
 			sRet += "\n";
 
 			if (i == nbLig-1)
 			{
-				sRet += "   " + getContainer(i,3).getCoins()[2];
+				sRet += "   " + tabContainer[i][3].getCoins()[2];
 
 				for (int j = 0 ; j < nbCol ; j++)
-					sRet += getContainer(i,j).toString3();
+					sRet += tabContainer[i][j].toString3();
 
 				sRet += "\n";
 			}
@@ -131,5 +197,8 @@ public class Client
 		return sRet;
 	}
 
-
+    public static void main (String args[]) throws Exception
+    {
+        new Client();
+    }
 }
