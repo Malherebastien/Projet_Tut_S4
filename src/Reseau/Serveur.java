@@ -58,18 +58,21 @@ public class Serveur
 
 				String msgRecu = new String(msg.getData());
 				System.out.println("message Recu : " + msgRecu);
-				String texteReponse;
+				String signal;
 
 				if ( msgRecu.contains("Name :") && nombreJoueur < 2)
 				{
 					String couleurJ = tabCouleur[nombreJoueur];
 					String codeCouleurJ = tabCodeCouleur[nombreJoueur];
-					texteReponse = "Bonjour " + msgRecu.substring(6);
-					String numJ = "" + (nombreJoueur+1);
 
-					envoyerMsg(texteReponse, msg);
-					envoyerMsg(numJ, msg);
-					envoyerMsg(couleurJ, msg);
+					signal = "Bonjour " + msgRecu.substring(6);
+					String numJ = "" + (nombreJoueur+1);
+					envoyerMsg(signal, msg);
+
+					String msgInfoJoueur = couleurJ + ";" + numJ;
+
+					envoyerMsg(msgInfoJoueur, msg);
+					//envoyerMsg(couleurJ, msg);
 
 					tabNomJ[nombreJoueur] = msgRecu.substring(6);
 					tabClient[nombreJoueur] = msg;
@@ -81,12 +84,6 @@ public class Serveur
 					if ( !partieCommencerBok )
 					{
 						partieCommencerBok = true;
-						texteReponse = "La partie va commencer";
-
-						for (int i = 0; i < nombreJoueur; i++)
-						{
-							envoyerMsg(texteReponse, tabClient[i] );
-						}
 
 						nbLigne = (int) (Math.random() * 5) + 4;
 						nbCol   = (int) (Math.random() * 5) + 4;
@@ -97,19 +94,104 @@ public class Serveur
 						tabJoueur[0] = PartieConsole.joueurs[0];
 						tabJoueur[1] = PartieConsole.joueurs[1];
 
+						/*for (int i = 0; i < nombreJoueur; i++)
+						{
+							envoyerMsg(partie.afficherTableauContainer(nbCol, nbLigne), tabClient[i]); //affiche tab
+						}*/
+
+						String map = "";
+						for ( int i = 0; i < nbLigne; i ++)
+						{
+							for ( int j = 0; j < nbCol; j++)
+							{
+								map += partie.getContainer(i,j);
+								map += ":";
+							}
+							map += "|";
+						}
+						signal = "01";
 						for (int i = 0; i < nombreJoueur; i++)
 						{
-							envoyerMsg(partie.afficherTableauContainer(nbCol, nbLigne), tabClient[i]);//affiche tab
+							envoyerMsg(signal, tabClient[i] );
+							envoyerMsg(map, tabClient[i]);
 						}
 
-						// recois le joueur actif, et le joueur actif recoi le message suivant
-						for (int i = 0; i < tabJoueur.length; i++)
+					}
+					else
+					{
+
+						//fin du jeu
+						signal = "88";
+						if ( tabJoueur[0].getNbTwistLock() == 0 && tabJoueur[1].getNbTwistLock() == 0)
 						{
-							if ( partie.getJoueurActif()== tabJoueur[i] )
+							envoyerMsg(signal, tabClient[0]);
+							envoyerMsg(signal, tabClient[1]);
+						}
+
+						// si le joueur courant n'a plus de TwistLock alors on passe son tour
+						signal = "50";
+						if ( partie.getJoueurActif() == tabJoueur[0] && tabJoueur[0].getNbTwistLock() == 0)
+						{
+							envoyerMsg(signal, tabClient[0] );
+							continue;
+						}
+						if ( partie.getJoueurActif() == tabJoueur[1] && tabJoueur[1].getNbTwistLock() == 0)
+						{
+							envoyerMsg(signal, tabClient[1] );
+							continue;
+						}
+
+						while ( true )
+						{
+							signal = "20"; //attente
+							// recois le joueur actif, et le joueur actif recoi le message suivant
+							if (partie.getJoueurActif() != tabJoueur[0])
 							{
-								texteReponse = "A vous de Jouer " + tabJoueur[i].getCouleur();
-								envoyerMsg(texteReponse, tabClient[i]);
+								envoyerMsg(signal, tabClient[0]);
+							} else
+							{
+								envoyerMsg(signal, tabClient[1]);
 							}
+
+
+							signal = "10"; //a vous de jouer
+							if (partie.getJoueurActif() == tabJoueur[0])
+							{
+								envoyerMsg(signal, tabClient[0]);
+							}
+							else
+							{
+								envoyerMsg(signal, tabClient[1]);
+							}
+
+							String coordonnees = recevoirMsg();
+							if (!verifCoord(coordonnees)) //test erreur coord
+							{
+								if (partie.getJoueurActif() == tabJoueur[0])
+								{
+									signal = "21";
+									envoyerMsg(signal, tabClient[0]);
+								} else
+								{
+									signal = "22";
+									envoyerMsg(signal, tabClient[1]);
+								}
+
+							}
+							else
+							{
+								//envoie resultat du joueur courant
+								signal = coordonnees;
+								if (partie.getJoueurActif() != tabJoueur[0])
+								{
+									envoyerMsg(signal, tabClient[0]);
+								} else
+								{
+									envoyerMsg(signal, tabClient[1]);
+								}
+								break;
+							}
+
 						}
 
 					}
@@ -122,10 +204,36 @@ public class Serveur
 
 
 
+	private boolean verifCoord(String coord)
+	{
+		try
+		{
+			if (coord.length() == 3) {
+				int lig = Integer.parseInt(coord.substring(0, 1));
+				int col = Character.toUpperCase(coord.charAt(1)) - 65;
+				int coin = Integer.parseInt(coord.substring(2, coord.length() - 1));
+
+				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0) return true;
+				if (coin <= 0 || coin >= 5) return true;
+			}
+		}catch (Exception e){}
+
+		return false;
+	}
+
 	private void envoyerMsg(String msg, DatagramPacket dpReceveurMessage) throws IOException
 	{
 		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), dpReceveurMessage.getAddress(), dpReceveurMessage.getPort());
 		ds.send(reponse);
+	}
+
+	private String recevoirMsg() throws IOException
+	{
+		//crée un receveur qui va recevoir la taille et la taille du msg
+		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
+		//recois le msg
+		ds.receive(dpMsg);
+		return new String(dpMsg.getData());
 	}
 
 
