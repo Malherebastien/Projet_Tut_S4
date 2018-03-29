@@ -106,9 +106,9 @@ public class Serveur
 
 							String coordonnees = recevoirMsg(); System.out.println(coordonnees);
 							//test erreur coord
-							if (verifCoord(coordonnees) == 1 ) { signalCoord(coordonnees); majGrille(coordonnees); break; }
-							if (verifCoord(coordonnees) == -1) continue;
-							if (verifCoord(coordonnees) == 0 ) signalErreur();
+							if (verifCoord(coordonnees) == 1  ) { signalCoord(coordonnees); majGrille(coordonnees); break; }
+							if (verifCoord(coordonnees) == 0  ) continue;
+							if (verifCoord(coordonnees) == -1 ) signalErreur();
 						}
 						changeJoueurActif();
 
@@ -344,8 +344,8 @@ public class Serveur
 
 				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0 && coin >= 1 || coin <= 4)
 				{
-					if (tabContainer[lig][col].getCoins()[coin].isOccupe()) return 0;
-					else                                                    return 1;
+					if (!tabContainer[lig][col].getCoins()[coin].isOccupe()) return 1;
+					else                                                    return 0;
 				}
 			}
 		}catch (Exception e){ System.out.println("Erreur parsing"); }
