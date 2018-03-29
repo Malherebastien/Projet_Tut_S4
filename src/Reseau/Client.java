@@ -98,6 +98,7 @@ public class Client
 
                     if (indJoueur == 0) indSec = 1;
 
+                    // faut prendre le tableau de joueur de Serveur OU envoyer le score de serveur vers Client
                     if (joueurs[indJoueur].getScore() > joueurs[indSec].getScore())
                         System.out.println("88 - Partie Terminée, Vous avez gagné " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
                     else
