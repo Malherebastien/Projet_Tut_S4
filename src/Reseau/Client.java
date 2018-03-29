@@ -1,6 +1,5 @@
 package Reseau;
 
-import Controler.PartieConsole;
 import Model.Coin;
 import Model.Container;
 import Model.Joueur;
@@ -194,8 +193,8 @@ public class Client
             // -64 pour les lettres et -1 pour le tableau
 
             // Parcours des joueurs pour remettres leurs points à 0 avant de fair eune nouvelle affectation
-            for (int i = 0; i < PartieConsole.joueurs.length ; i++)
-                PartieConsole.joueurs[i].setScore(0);
+            for (int i = 0; i < joueurs.length ; i++)
+                joueurs[i].setScore(0);
 
             // Parcours des containers pour mettre les points aux joueurs
             for (int i = 0; i < nbLig; i++)

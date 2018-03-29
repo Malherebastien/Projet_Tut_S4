@@ -134,6 +134,8 @@ public class Serveur
 
 			}
 			System.out.println("Fin Jeu");
+			System.out.println("Scoore " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
+			System.out.println("Scoore " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
 
@@ -362,9 +364,10 @@ public class Serveur
 					// coin -1 a cause de l'indice qui commence a 0
 					if (!tabContainer[lig-1][col].getCoins()[coin-1].isOccupe())
 					{
-						//renvois seulement le permier chiffre
-						System.out.println (" Valeur : " + tabContainer[lig-1][col].getValeur());
-						joueurActif.setScore( joueurActif.getScore() + tabContainer[lig-1][col].getValeur() );
+						//System.out.println (" Valeur : " + tabContainer[lig-1][col].getValeur());
+						if ( joueurActif == joueurs[0] ) { joueurs[0].setScore( joueurs[0].getScore() + tabContainer[lig -1][col].getValeur() ); System.out.println("scoooore " + joueurs[0].getScore()); }
+						if ( joueurActif == joueurs[1] ) { joueurs[1].setScore( joueurs[1].getScore() + tabContainer[lig -1][col].getValeur() ); System.out.println("scoooore " + joueurs[1].getScore());}
+						//System.out.println(joueurActif.getScore());
 						return 1;
 					}
 					else return 0;
