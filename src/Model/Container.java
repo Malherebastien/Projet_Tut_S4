@@ -1,6 +1,7 @@
 package Model;
 
 import Controler.PartieConsole;
+import Reseau.Serveur;
 
 import java.util.HashMap;
 
@@ -55,6 +56,17 @@ public class Container
         if (proprietaire != null)
             proprietaire.setScore(proprietaire.getScore() + this.valeur);
     }
+
+	/**
+	 * Modificateur qui appelle lui-même le modificateur setProprietaire
+	 * Calcul le score du joueur si non nul
+	 */
+	public void setScoreJoueurServeur()
+	{
+		setProprietaireServeur();
+		if (proprietaire != null)
+			proprietaire.setScore(proprietaire.getScore() + this.valeur);
+	}
 
     /**
      * Accesseur de coin
@@ -142,6 +154,40 @@ public class Container
 
         for (int i = 0; i < PartieConsole.joueurs.length ; i++)
             mapJoueur.put(PartieConsole.joueurs[i], 0);
+
+        for (int i = 0; i < coins.length; i++)
+        {
+            if (coins[i].isOccupe())
+                for (Object j : mapJoueur.keySet())
+                    if (coins[i].getOccupant() == (Joueur)j) mapJoueur.put((Joueur)j, mapJoueur.get(j)+1);
+        }
+
+        boolean egalite = false;
+        Joueur premier = null;
+        for (Object j : mapJoueur.keySet())
+        {
+            if (mapJoueur.get((Joueur)j) != 0)
+            {
+                if (premier == null) premier = (Joueur)j;
+                if (mapJoueur.get(premier) < mapJoueur.get(j)) premier = (Joueur)j;
+                if (premier != (Joueur)j && mapJoueur.get(premier) == mapJoueur.get((Joueur)j)) egalite = true;
+            }
+        }
+
+        if (!egalite) this.proprietaire = premier;
+    }
+
+    /**
+     * Modificateur du propriétaire pour le serveur
+     */
+    public void setProprietaireServeur()
+    {
+        this.proprietaire = null;
+
+        HashMap<Joueur, Integer> mapJoueur = new HashMap<>();
+
+        for (int i = 0; i < Serveur.joueurs.length ; i++)
+            mapJoueur.put(Serveur.joueurs[i], 0);
 
         for (int i = 0; i < coins.length; i++)
         {

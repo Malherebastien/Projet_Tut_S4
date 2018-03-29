@@ -15,7 +15,7 @@ public class Serveur
 	private Container[][] tabContainer;
 	private Coin[][]      tabCoin;
 
-	private static Joueur[] joueurs;
+	public static Joueur[] joueurs;
 	private DatagramPacket [] tabClient;
 	private boolean partieCommencerBok;
 	private int nombreJoueur;
@@ -143,7 +143,7 @@ public class Serveur
 			// Parcours des containers pour mettre les points aux joueurs
 			for (int i = 0; i < nbLigne ; i++)
 				for (int j = 0; j < nbCol ; j++)
-					this.tabContainer[i][j].setScoreJoueur();
+					this.tabContainer[i][j].setScoreJoueurServeur();
 		}
 		else if (this.joueurActif.getNbTwistLock() != 0) this.joueurActif.setNbTwistLock(this.joueurActif.getNbTwistLock() - 1);
 	}
