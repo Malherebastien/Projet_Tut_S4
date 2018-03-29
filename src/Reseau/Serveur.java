@@ -106,11 +106,26 @@ public class Serveur
 
 							String coordonnees = recevoirMsg(); System.out.println(coordonnees);
 							//test erreur coord
-							if (verifCoord(coordonnees) == 1  ) { signalCoord(coordonnees); majGrille(coordonnees); break; }
-							if (verifCoord(coordonnees) == 0  ) signalErreur(); joueurActif.setNbTwistLock( joueurActif.getNbTwistLock() -1);
-							if (verifCoord(coordonnees) == -1 ) signalErreur();
+							if (verifCoord(coordonnees) == 1  )
+							{
+								signalCoord(coordonnees);
+								majGrille(coordonnees);
+								joueurActif.setNbTwistLock( joueurActif.getNbTwistLock() -1);
+								break;
+							}
+							if (verifCoord(coordonnees) == 0  )
+							{
+								signalErreur();
+								joueurActif.setNbTwistLock( joueurActif.getNbTwistLock() -1);
+							}
+							if (verifCoord(coordonnees) == -1 )
+							{
+								signalErreur();
+							}
 						}
+						System.out.println("Joueur TwistLock :" + joueurActif.getNom() + "   " + joueurActif.getNbTwistLock());
 						changeJoueurActif();
+
 
 					}
 
@@ -202,7 +217,7 @@ public class Serveur
 	private boolean signal88()
 	{
 		try {
-			if (joueurs[0].getNbTwistLock() == 0 && joueurs[1].getNbTwistLock() == 0)
+			if (joueurs[0].getNbTwistLock() <= 0 && joueurs[1].getNbTwistLock() <= 0)
 			{
 				signal = "88";
 				envoyerMsg(signal, tabClient[0]);
@@ -219,7 +234,7 @@ public class Serveur
 		try {
 			for ( int i = 0; i < joueurs.length; i++ )
 			{
-				if (getJoueurActif() == joueurs[i] && joueurs[i].getNbTwistLock() == 0)
+				if (getJoueurActif() == joueurs[i] && joueurs[i].getNbTwistLock() <= 0)
 				{
 					signal = "50";
 					envoyerMsg(signal, tabClient[i]);
@@ -344,8 +359,14 @@ public class Serveur
 
 				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0 && coin >= 1 && coin <= 4)
 				{
-					if (!tabContainer[lig][col].getCoins()[coin-1].isOccupe()) return 1; // coin -1 a cause de l'indice qui commence a 0
-					else                                                       return 0;
+					// coin -1 a cause de l'indice qui commence a 0
+					if (!tabContainer[lig][col].getCoins()[coin-1].isOccupe())
+					{
+						System.out.println (" Valeur : " + tabContainer[lig][col].getValeur());
+						joueurActif.setScore( joueurActif.getScore() + tabContainer[lig][col].getValeur() );
+						return 1;
+					}
+					else return 0;
 				}
 			}
 		}catch (Exception e){ System.out.println("Erreur parsing"); }

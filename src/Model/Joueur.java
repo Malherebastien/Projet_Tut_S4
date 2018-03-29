@@ -8,7 +8,8 @@ package Model;
 
 public class Joueur
 {
-    private final int INIT_TWIST_LOCK = 1;
+    private final int INIT_TWIST_LOCK = 2
+            ;
 
     private int nbTwistLock; //Commence à 20
     private int score;
