@@ -6,8 +6,11 @@ import Model.Joueur;
 
 import java.util.Scanner;
 
+/**
+ * Classe PartieConsole correspondant à la version console du programme
+ */
 public class PartieConsole
-{//
+{
 	public static Joueur[] joueurs;
 
 	private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m", "Bleu;\033[34m", "Orange;\033[33m" };
@@ -21,6 +24,14 @@ public class PartieConsole
 	private Joueur joueurActif;
 	private int nbJoueurs;
 
+    /**
+     * Constructeur de la classe PartieConsole
+     * Initialise un nombre de lignes, colonnes et un nombre de joueurs
+     *
+     * @param nbLig
+     * @param nbCol
+     * @param nbJoueurs
+     */
 	public PartieConsole(int nbLig, int nbCol, int nbJoueurs)
 	{
 		this.nbLig = nbLig;
@@ -61,6 +72,9 @@ public class PartieConsole
 		//Remplissage du tableau de Model.Coin de chaque Model.Container (moins compliqué que ce que je pensais)
 	}
 
+    /**
+     * Initialise le début de partie
+     */
 	public void lancerPartie()
 	{
 		System.out.println("==============================================");
@@ -123,19 +137,32 @@ public class PartieConsole
 			else
 				System.out.println("Plus de TwistLocks ! Joueur suivant.");
 
-			for (int i = 0 ; i < this.nbJoueurs ; i++)
-				if (this.joueurActif == PartieConsole.joueurs[i])
-				{
-					if (i == this.nbJoueurs-1) this.joueurActif = PartieConsole.joueurs[0];
-					else                       this.joueurActif = PartieConsole.joueurs[i+1];
-
-					break;
-				}
+			changeJoueurActif();
 		}
 
 		System.out.println(afficherFinPartie());
 	}
 
+	public void changeJoueurActif()
+	{
+		for (int i = 0 ; i < this.nbJoueurs ; i++)
+		{
+			if (this.joueurActif == PartieConsole.joueurs[i])
+			{
+				if (i == this.nbJoueurs - 1) this.joueurActif = PartieConsole.joueurs[0];
+				else this.joueurActif = PartieConsole.joueurs[i + 1];
+
+				break;
+			}
+		}
+	}
+
+    /**
+     * Vérifie l'intégrité des donné
+     *
+     * @param saisie
+     * @return boolean
+     */
 	private boolean estSaisieValide(String saisie)
 	{
 		try {
@@ -153,27 +180,11 @@ public class PartieConsole
 		return false;
 	}
 
-	public boolean estSaisieValideServeur(String saisie)
-	{
-		try {
-			if (saisie.length() == 3)
-			{
-				int lig  = Integer.parseInt(saisie.substring(0,1));
-				int col  = Character.toUpperCase(saisie.charAt(1))-65;
-				int coin = Integer.parseInt(saisie.substring(2,saisie.length()-1));
-
-				if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
-				if (coin <=0 || coin >= 5 ) return true;
-			}
-
-			//if (Integer.parseInt(saisie) < 4 && Integer.parseInt(saisie) > 0) return true;
-		} catch (Exception e) {}
-
-		return false;
-	}
-
-
-
+    /**
+     * Vérifie si la partie est finie
+     *
+     * @return
+     */
 	private boolean estFinDePartie()
 	{
 		for (int i = 0 ; i < PartieConsole.joueurs.length ; i++)

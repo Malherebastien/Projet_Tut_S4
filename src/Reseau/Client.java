@@ -1,55 +1,163 @@
 package Reseau;
 
+import Model.Coin;
+import Model.Container;
 import Model.Joueur;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 
 public class Client
 {
 	private DatagramSocket ds;
 
+    private static Joueur[] joueurs;
+
+    private Joueur joueurActif;
+
+    private int indJoueur;
+    private String nom;
+
+    private static final String[] COULEURS = new String[] { "Rouge;\033[31m", "Vert;\033[32m" };
+
+	private Container[][] tabContainer;
+	private Coin[][]      tabCoin;
+
+	private int nbLig;
+	private int nbCol;
+
 	public Client() throws IOException
 	{
 		ds = new DatagramSocket(); // connecte le client
 
-		Scanner scNom = new Scanner(System.in);
-		String msgNom = "Name :" + scNom.nextLine();
-
-		envoyerMsg(msgNom);
-		System.out.println(recevoirMsg());
-
-		String cpt = recevoirMsg();
-
-		String couleur = recevoirMsg();
-
-		System.out.println( "Vous etes le Joueur " + cpt + " (" + couleur + ") " + " attente suite ..." );
-
-		System.out.println( recevoirMsg() ); // partie commencer
-		System.out.println( recevoirMsg() ); // map
-
+        initClient();
 		lancerClient();
-
 	}
+
+	private void initClient()
+    {
+        try {
+            Scanner scNom = new Scanner(System.in);
+            nom = " Name : " + scNom.nextLine();
+
+            envoyerMsg(nom);
+
+            String msgNumCoul = recevoirMsg();
+			System.out.println(msgNumCoul);
+
+            indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
+
+            System.out.println(indJoueur + "-Bonjour " + nom);
+            System.out.println("Vous etes le Joueur " + (indJoueur+1) + " (" + msgNumCoul.split(";")[0] + "), " + " attente suite ..." );
+        } catch (IOException ioe) { ioe.printStackTrace(); }
+    }
 
 	public void lancerClient() throws IOException
 	{
-		while ( true )
+		while (true)
 		{
-			System.out.println( recevoirMsg() ); // map
-			System.out.println("envoi au serveur chaine :");
-			Scanner sc = new Scanner(System.in);
-			String message = sc.nextLine();
+            String signal = recevoirMsg();
 
-			envoyerMsg(message);
+            System.out.println(signal);
+            if ( signal.substring(0,2).equals("01") )
+			{
+				String map = signal.substring(34);
+				initGrille(map);
+			}
+
+			if ( signal.substring(0,2).equals("10"))
+			{
+				Scanner sc = new Scanner(System.in);
+				envoyerMsg(sc.nextLine());
+			}
+
+			if ( signal.substring(0,2).equals("88") )
+			{
+				System.exit(0);
+			}
+
+			/*if ( signal.substring(0,2).equals("20"))
+			{
+				System.out.println("20");
+			}
+
+			if ( signal.substring(0,2).equals("88"))
+			{
+				System.out.println("88");
+
+			}*/
+           	/*if (estEntier(signal))
+            {
+                int sig = Integer.parseInt(signal); // faire avec des equals
+
+                if (sig == 1)
+                {
+                    String map = recevoirMsg();
+                    //System.out.println("01 - La partie va commencer\nMap = " + map);
+					System.out.println(map);
+					initGrille(map);
+                }
+
+                if (sig == 10)
+                {
+                	System.out.println(sig);
+                    //System.out.print("10 - A vous de jouer (" + joueurs[indJoueur].getCouleur() + ") : ");
+
+					Scanner sc = new Scanner(System.in);
+                    envoyerMsg(sc.nextLine());
+                }
+
+                if (sig == 20)
+                {
+                    String donnees = recevoirMsg();
+                    //Signal 22 sinon on va jamais avoir le signal 22, meme si le signal est 22
+					if (estEntier(donnees) && Integer.parseInt(donnees) == 22) //System.out.println("22 - Coup adversaire illegal");
+					else //{ System.out.println("20 - Coup adversaire : " + donnees);	}
+                }
+
+                if (sig == 21) //System.out.println(sig);System.out.println("21 - Coup illegal");
+
+                if (sig == 50) //System.out.println("50 - Vous ne pouvez plus jouer");
+
+                if (sig == 88)
+                {
+                    int indSec = 0;
+
+                    if (indJoueur == 0) indSec = 1;
+					int score1 = Integer.parseInt( recevoirMsg() );
+					int score2 = Integer.parseInt( recevoirMsg() );
+
+					joueurs[indJoueur].setScore( score1 );
+					joueurs[indSec].setScore( score2 );
+
+                    if (joueurs[indJoueur].getScore() > joueurs[indSec].getScore())
+                        System.out.println("88 - Partie Terminée, Vous avez gagné (Votre Score) " + joueurs[indJoueur].getScore() + " - (Score Adverse) " + joueurs[indSec].getScore());
+                    else
+                        System.out.println("88 - Partie Terminée, Vous avez perdu (Votre Score) " + joueurs[indJoueur].getScore() + " - (Score Adverse) " + joueurs[indSec].getScore());
+                }
+
+                //On va pas l'implementer dans serveur car trop de chose a faire avant ça
+				//Cependant ce signal dit que le client de la demande est inconnu
+                /*if ( sig == 91 )
+				{
+					System.out.println("91 - demande non valide");
+				}*/
+            //}
+
 		}
 	}
 
-	public static void main (String args[]) throws Exception
-	{
-		new Client();
-	}
+	private boolean estEntier(String val)
+    {
+        try
+		{
+			Integer.parseInt(val);return true;
+		} catch (Exception e) {}
+
+        return false;
+    }
 
 	private void envoyerMsg(String msg) throws IOException
 	{
@@ -62,11 +170,123 @@ public class Client
 	private String recevoirMsg() throws IOException
 	{
 		//crée un receveur qui va recevoir la taille et la taille du msg
-		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
+		DatagramPacket dpMsg = new DatagramPacket(new byte[1024], 1024);
 		//recois le msg
 		ds.receive(dpMsg);
-		return new String(dpMsg.getData());
+		return new String(dpMsg.getData()).trim();
 	}
 
+	private void initGrille(String map)
+	{
+	    joueurs = new Joueur[] { new Joueur(COULEURS[0].split(";")[0], COULEURS[0].split(";")[1]),
+	                             new Joueur(COULEURS[1].split(";")[0], COULEURS[1].split(";")[1]) };
 
+	    joueurActif = joueurs[0];
+
+	    nbLig = map.split("\\|").length;
+	    nbCol = map.split("\\|")[0].split(":").length;
+
+        tabCoin = new Coin[nbLig+1][nbCol+1];
+
+        for (int i = 0; i < nbLig+1; i++)
+            for (int j = 0; j < nbCol+1; j++)
+                tabCoin[i][j] = new Coin();
+
+		tabContainer = new Container[nbLig][nbCol];
+
+		for (int i = 0 ; i < nbLig ; i++)
+        {
+            String ligne = map.split("\\|")[i];
+
+            for (int j = 0 ; j < nbCol ; j++)
+                tabContainer[i][j] = initCoinsContainer(new Container(new Integer(ligne.split(":")[j])), i, j);
+        }
+	}
+
+	private Container initCoinsContainer(Container c, int lig, int col)
+    {
+        c.addCoin(this.tabCoin[lig][col]); //Haut gauche
+        c.addCoin(this.tabCoin[lig][col+1]); //Haut droite
+        c.addCoin(this.tabCoin[lig+1][col+1]); //Bas droite
+        c.addCoin(this.tabCoin[lig+1][col]); // Bas gauche
+
+        return c;
+    }
+
+	private void majGrille(String valPos)
+	{
+        int coin = Integer.parseInt(valPos.substring(valPos.length()-1, valPos.length()));
+
+        String coord = valPos.substring(0,valPos.length()-1);
+
+        int lig = Integer.parseInt(valPos.substring(0, coord.length()-1));
+        int col = Character.toUpperCase(coord.charAt(coord.length()-1))-65;
+
+        if (!tabContainer[lig-1][col].getCoins()[coin-1].isOccupe())
+        {
+            this.tabContainer[lig-1][col].getCoins()[coin-1].setOccupant(joueurActif);
+            // -64 pour les lettres et -1 pour le tableau
+
+            // Parcours des joueurs pour remettres leurs points à 0 avant de fair eune nouvelle affectation
+            for (int i = 0; i < joueurs.length ; i++)
+                joueurs[i].setScore(0);
+
+            // Parcours des containers pour mettre les points aux joueurs
+            for (int i = 0; i < nbLig; i++)
+                for (int j = 0; j < nbCol; j++)
+                    this.tabContainer[i][j].setScoreJoueur();
+        } else
+        {
+            System.out.println("Mouvement impossible, pénalité d'un TwistLock");
+            if (this.joueurActif.getNbTwistLock() != 0)
+                this.joueurActif.setNbTwistLock(this.joueurActif.getNbTwistLock() - 1);
+        }
+	}
+
+	private String afficherGrille()
+	{
+		String sRet = "";
+
+		sRet += "    ";
+
+		char col = 'A';
+		while(col <= 64+nbCol) sRet += "  " + col++ + "  ";
+
+		sRet +="\n";
+
+		for (int i = 0; i < nbLig; i++)
+		{
+			sRet += "   " + tabContainer[i][0].getCoins()[0];
+
+			for (int j = 0 ; j < nbCol ; j++)
+				sRet += tabContainer[i][j].toString1();
+
+			sRet += "\n";
+
+
+			sRet += String.format("%2s",(1 + i)) + " |";
+
+			for (int j = 0 ; j < nbCol ; j++)
+				sRet += tabContainer[i][j].toString2();
+
+			sRet += "\n";
+
+			if (i == nbLig-1)
+			{
+				sRet += "   " + tabContainer[i][3].getCoins()[2];
+
+				for (int j = 0 ; j < nbCol ; j++)
+					sRet += tabContainer[i][j].toString3();
+
+				sRet += "\n";
+			}
+		}
+
+		return sRet;
+	}
+
+    public static void main (String args[]) throws Exception
+    {
+        new Client();
+    }
 }
