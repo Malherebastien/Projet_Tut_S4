@@ -1,6 +1,8 @@
 package Model;
 
 import Controler.PartieConsole;
+import Controler.PartieConsoleAI;
+import Reseau.Serveur;
 
 import java.util.HashMap;
 

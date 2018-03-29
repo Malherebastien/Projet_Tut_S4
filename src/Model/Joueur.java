@@ -37,6 +37,16 @@ public class Joueur
         this.nom = "";
     }
 
+    public Joueur(String couleur, String codeCouleur)
+    {
+        this.nbTwistLock = INIT_TWIST_LOCK;
+        this.score = 0;
+        this.couleur = couleur;
+        this.codeCouleur = codeCouleur;
+
+        this.nom = "";
+    }
+
     //Overide dans AI
     public String jouerTour(Container[][] tabContainer)
     {

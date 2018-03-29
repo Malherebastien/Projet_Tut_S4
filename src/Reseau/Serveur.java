@@ -378,7 +378,6 @@ public class Serveur
 
 	public void changeJoueurActif()
 	{
-		//
 		if      ( joueurActif == joueurs[0] ) joueurActif = joueurs[1];
 		else if ( joueurActif == joueurs[1] ) joueurActif = joueurs[0];
 	}
