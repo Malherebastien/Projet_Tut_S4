@@ -28,7 +28,6 @@ public class Serveur
 	public Serveur ()
 	{
 		nombreJoueur = 0;
-
 		partieCommencerBok = false;
 
 		tabNomJ = new String[2];
@@ -66,6 +65,7 @@ public class Serveur
 						nombreJoueur++;
 
 					}
+
 				}
 				if ( nombreJoueur == 2 )
 				{
@@ -91,7 +91,7 @@ public class Serveur
 						boolean joueurPeutJouer = true;
 
 						//test si fin du jeu
-						signal88();
+						if ( signal88() ) break;
 
 						// test si le joueur courant a des TwistLock, sinon passe son tour
 						joueurPeutJouer = signal50();
@@ -106,7 +106,10 @@ public class Serveur
 
 							String coordonnees = recevoirMsg(); System.out.println(coordonnees);
 							//test erreur coord
-							if (!verifCoord(coordonnees)) { signalErreur();	}
+							if (!verifCoord(coordonnees))
+							{
+								signalErreur();
+							}
 							else
 							{
 								//envoie resultat du joueur courant
@@ -123,6 +126,7 @@ public class Serveur
 				System.out.println("new tour");
 
 			}
+			System.out.println("Fin Jeu");
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
 
@@ -177,7 +181,7 @@ public class Serveur
 		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 01"); }
 	}
 
-	private void signal88()
+	private boolean signal88()
 	{
 		try {
 			if (joueurs[0].getNbTwistLock() == 0 && joueurs[1].getNbTwistLock() == 0)
@@ -185,8 +189,10 @@ public class Serveur
 				signal = "88";
 				envoyerMsg(signal, tabClient[0]);
 				envoyerMsg(signal, tabClient[1]);
+				return true;
 			}
 		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 88");}
+		return false;
 	}
 
 	private boolean signal50()

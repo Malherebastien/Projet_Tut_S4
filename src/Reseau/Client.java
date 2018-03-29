@@ -75,7 +75,7 @@ public class Client
 
                 if (sig == 10)
                 {
-                    System.out.print("10 - A vous de jouer + (" + joueurs[indJoueur].getCouleur() + ") : ");
+                    System.out.print("10 - A vous de jouer (" + joueurs[indJoueur].getCouleur() + ") : ");
 
 					Scanner sc = new Scanner(System.in);
                     envoyerMsg(sc.nextLine());
@@ -84,7 +84,7 @@ public class Client
                 if (sig == 20)
                 {
                     String donnees = recevoirMsg();
-                    //Signal 22
+                    //Signal 22 sinon on va jamais avoir le signal 22, meme si le signal est 22
 					if (estEntier(donnees) && Integer.parseInt(donnees) == 22) System.out.println("22 - Coup adversaire illegal");
 					else System.out.println("20 - Coup adversaire : " + donnees);
                 }
@@ -105,6 +105,8 @@ public class Client
                         System.out.println("88 - Partie Terminée, Vous avez perdu " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
                 }
 
+                //On va pas l'implemtenter dans serveur car trop de chose a faire avant ça
+				//Cependant ce signal dit que le client de la demande est inconnu
                 if ( sig == 91 )
 				{
 					System.out.println("91 - demande non valide");

@@ -181,32 +181,6 @@ public class PartieConsole
 	}
 
     /**
-     * Méthode similaire à 'estSaisieValide' côté serveur
-     *
-     * @param saisie
-     * @return
-     */
-	public boolean estSaisieValideServeur(String saisie)
-	{
-		try {
-			if (saisie.length() == 3)
-			{
-				int lig  = Integer.parseInt(saisie.substring(0,1));
-				int col  = Character.toUpperCase(saisie.charAt(1))-65;
-				int coin = Integer.parseInt(saisie.substring(2,saisie.length()-1));
-
-				if (lig <= nbLig && lig >= 0 && col <= nbCol && col >= 0) return true;
-				if (coin <=0 || coin >= 5 ) return true;
-			}
-
-			//if (Integer.parseInt(saisie) < 4 && Integer.parseInt(saisie) > 0) return true;
-		} catch (Exception e) {}
-
-		return false;
-	}
-
-
-    /**
      * Vérifie si la partie est finie
      *
      * @return
