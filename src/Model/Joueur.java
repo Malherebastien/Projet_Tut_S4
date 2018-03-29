@@ -8,8 +8,7 @@ package Model;
 
 public class Joueur
 {
-    private final int INIT_TWIST_LOCK = 2
-            ;
+    private final int INIT_TWIST_LOCK = 1;
 
     private int nbTwistLock; //Commence à 20
     private int score;
@@ -17,20 +16,31 @@ public class Joueur
     private String couleur;
     private String codeCouleur;
     private String nom;
+    private boolean humain;
 
     /**
      * Constructeur de la classe Joueur
      *
      * @param couleur
      * @param codeCouleur
+     * @param humain
      */
-    public Joueur(String couleur, String codeCouleur)
+
+    public Joueur(String couleur, String codeCouleur, boolean humain)
     {
         this.nbTwistLock = INIT_TWIST_LOCK;
         this.score = 0;
         this.couleur = couleur;
         this.codeCouleur = codeCouleur;
+        this.humain = humain;
+
         this.nom = "";
+    }
+
+    //Overide dans AI
+    public String jouerTour(Container[][] tabContainer)
+    {
+        return "";
     }
 
     /**
@@ -125,6 +135,11 @@ public class Joueur
     public String getBase()
     {
         return "\033[30m";
+    }
+
+    public boolean isHumain()
+    {
+        return humain;
     }
 
     /**

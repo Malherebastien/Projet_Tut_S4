@@ -37,7 +37,10 @@ public class Coin
     public void setOccupant(Joueur occupant)
     {
         this.occupant = occupant;
-        this.occupe = true;
+        if (occupant != null)
+            this.occupe = true;
+        else
+            this.occupe = false;
     }
 
     /**

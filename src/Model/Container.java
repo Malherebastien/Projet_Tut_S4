@@ -1,7 +1,6 @@
 package Model;
 
 import Controler.PartieConsole;
-import Reseau.Serveur;
 
 import java.util.HashMap;
 
@@ -68,11 +67,20 @@ public class Container
 			proprietaire.setScore(proprietaire.getScore() + this.valeur);
 	}
 
+    public int calculerScore()
+    {
+        setProprietaire();
+        if (proprietaire != null)
+            return valeur;
+        return 0;
+    }
+
     /**
      * Accesseur de coin
      *
      * @return coins
      */
+
     public Coin[] getCoins()
     {
         return coins;
@@ -152,8 +160,8 @@ public class Container
 
         HashMap<Joueur, Integer> mapJoueur = new HashMap<>();
 
-        for (int i = 0; i < PartieConsole.joueurs.length ; i++)
-            mapJoueur.put(PartieConsole.joueurs[i], 0);
+        for (int i = 0; i < PartieConsoleAI.joueurs.length ; i++)
+            mapJoueur.put(PartieConsoleAI.joueurs[i], 0);
 
         for (int i = 0; i < coins.length; i++)
         {
