@@ -357,14 +357,14 @@ public class Serveur
 				int col  = Character.toUpperCase(coord.charAt(1)) - 65;
 				int coin = Integer.parseInt(coord.charAt(2)+"");
 
-				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0 && coin >= 1 && coin <= 4)
+				if (lig <= nbLigne && lig > 0 && col <= nbCol && col >= 0 && coin >= 1 && coin <= 4)
 				{
 					// coin -1 a cause de l'indice qui commence a 0
-					if (!tabContainer[lig][col].getCoins()[coin-1].isOccupe())
+					if (!tabContainer[lig-1][col].getCoins()[coin-1].isOccupe())
 					{
 						//renvois seulement le permier chiffre
-						System.out.println (" Valeur : " + tabContainer[lig][col].getValeur());
-						joueurActif.setScore( joueurActif.getScore() + tabContainer[lig][col].getValeur() );
+						System.out.println (" Valeur : " + tabContainer[lig-1][col].getValeur());
+						joueurActif.setScore( joueurActif.getScore() + tabContainer[lig-1][col].getValeur() );
 						return 1;
 					}
 					else return 0;
