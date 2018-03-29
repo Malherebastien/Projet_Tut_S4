@@ -362,6 +362,7 @@ public class Serveur
 					// coin -1 a cause de l'indice qui commence a 0
 					if (!tabContainer[lig][col].getCoins()[coin-1].isOccupe())
 					{
+						//renvois seulement le permier chiffre
 						System.out.println (" Valeur : " + tabContainer[lig][col].getValeur());
 						joueurActif.setScore( joueurActif.getScore() + tabContainer[lig][col].getValeur() );
 						return 1;
