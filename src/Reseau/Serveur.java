@@ -75,14 +75,11 @@ public class Serveur
 						partieCommencerBok = true;
 
 						initPartie();
-						System.out.println("init");
 						String map = preparerMap();
-						System.out.println("creation map");
 						System.out.println(map);
 						initGrille(map);
 
 						signal01(map);
-						System.out.println("envoie map");
 					}
 
 					if ( partieCommencerBok )
@@ -131,8 +128,8 @@ public class Serveur
 			}
 			System.out.println("Fin Jeu");
 			//envoyerScore();
-			System.out.println("Score " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
-			System.out.println("Score " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
+			//System.out.println("Score " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
+			//System.out.println("Score " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
 

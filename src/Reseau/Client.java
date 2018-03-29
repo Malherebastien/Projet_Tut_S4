@@ -54,9 +54,8 @@ public class Client
 
 			if ( signal.substring(0,2).equals("88") )
 			{
-				//String msg = recevoirMsg();
-				System.out.println("Length : " +signal.length());
-				//System.out.println(msg);
+				String msg = recevoirMsg();
+				System.out.println(msg);
 				System.exit(0);
 			}
 			System.out.println();
@@ -66,7 +65,7 @@ public class Client
 	private void envoyerMsg(String msg) throws IOException
 	{
 		// crée un envoyeur qui envoie les bits, taill du msg à l'adresse internet "localhost" sur le port 2009
-		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), InetAddress.getByName("localhost"), 2009);
+		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), InetAddress.getByName("127.0.0.1"), 2009);
 		//envoie le msg
 		ds.send(reponse);
 	}
