@@ -234,16 +234,16 @@ public class Serveur
 			{
 				if ( joueurs[0].getScore() > joueurs[1].getScore())
 				{
-					signal = "88 - Partie Terminée, Vous avez gagné " + joueurs[0].getScore() + " - egfddsdfx" + joueurs[1].getScore() + "!";
+					signal = "88 - Partie Terminée, Vous avez gagne " + joueurs[0].getScore() + " - " + joueurs[1].getScore() ;
 					envoyerMsg(signal, tabClient[0]);
-					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[1].getScore() + " - tgdrfhgf" + joueurs[0].getScore() + "!";
+					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[1].getScore() + " - " + joueurs[0].getScore() ;
 					envoyerMsg(signal, tabClient[1]);
 				}
 				else
 				{
-					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[0].getScore() + " - tgrhejdikfbsdwkx" + joueurs[1].getScore() ;
+					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[0].getScore() + " - " + joueurs[1].getScore() ;
 					envoyerMsg(signal, tabClient[0]);
-					signal = "88 - Partie Terminée, Vous avez gagné " + joueurs[1].getScore() + " - drfdsrgdfs" + joueurs[0].getScore() ;
+					signal = "88 - Partie Terminée, Vous avez gagne " + joueurs[1].getScore() + " - " + joueurs[0].getScore() ;
 					envoyerMsg(signal, tabClient[1]);
 				}
 
@@ -289,8 +289,12 @@ public class Serveur
 			{
 				if (getJoueurActif() == joueurs[i])
 				{
-					signal = "10 - A vous de jouer (" + joueurActif.getCouleur() + ") : "; //a vous de jouer
+					signal = "10 - A vous de jouer (" + joueurActif.getCouleur() + ") : \n" + afficherGrille(); //a vous de jouer
 					envoyerMsg(signal, tabClient[i]);
+					//String carte = "MAP:\n" + afficherGrille();
+					//if ( joueurActif == joueurs[0])envoyerMsg(carte,tabClient[0]);
+					//else envoyerMsg( carte, tabClient[1]);
+
 				}
 			}
 
@@ -319,6 +323,47 @@ public class Serveur
 
 		}catch (IOException ioe) { System.out.println("Erreur Signal Erreur"); }
 
+	}
+	private String afficherGrille()
+	{
+		String sRet = "";
+
+		sRet += "    ";
+
+		char col = 'A';
+		while(col <= 64+nbCol) sRet += "  " + col++ + "  ";
+
+		sRet +="\n";
+
+		for (int i = 0; i < nbLigne; i++)
+		{
+			sRet += "   " + tabContainer[i][0].getCoins()[0];
+
+			for (int j = 0 ; j < nbCol ; j++)
+				sRet += tabContainer[i][j].toString1();
+
+			sRet += "\n";
+
+
+			sRet += String.format("%2s",(1 + i)) + " |";
+
+			for (int j = 0 ; j < nbCol ; j++)
+				sRet += tabContainer[i][j].toString2();
+
+			sRet += "\n";
+
+			if (i == nbLigne-1)
+			{
+				sRet += "   " + tabContainer[i][3].getCoins()[2];
+
+				for (int j = 0 ; j < nbCol ; j++)
+					sRet += tabContainer[i][j].toString3();
+
+				sRet += "\n";
+			}
+		}
+
+		return sRet;
 	}
 
 	public Joueur getJoueurActif() { return joueurActif;}

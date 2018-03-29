@@ -170,7 +170,7 @@ public class Client
 	private String recevoirMsg() throws IOException
 	{
 		//crée un receveur qui va recevoir la taille et la taille du msg
-		DatagramPacket dpMsg = new DatagramPacket(new byte[512], 512);
+		DatagramPacket dpMsg = new DatagramPacket(new byte[1024], 1024);
 		//recois le msg
 		ds.receive(dpMsg);
 		return new String(dpMsg.getData()).trim();
