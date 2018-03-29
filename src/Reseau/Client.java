@@ -44,7 +44,7 @@ public class Client
 
             envoyerMsg(nom);
 
-            String msgNumCoul = recevoirMsg(); msgNumCoul.trim();
+            String msgNumCoul = recevoirMsg();
 			System.out.println(msgNumCoul);
 
             indJoueur = Integer.parseInt( msgNumCoul.split(";")[1] );
@@ -85,7 +85,7 @@ public class Client
                     String donnees = recevoirMsg();
                     //Signal 22 sinon on va jamais avoir le signal 22, meme si le signal est 22
 					if (estEntier(donnees) && Integer.parseInt(donnees) == 22) System.out.println("22 - Coup adversaire illegal");
-					else System.out.println("20 - Coup adversaire : " + donnees);
+					else { System.out.println("20 - Coup adversaire : " + donnees);	}
                 }
 
                 if (sig == 21) System.out.println("21 - Coup illegal");
@@ -97,12 +97,17 @@ public class Client
                     int indSec = 0;
 
                     if (indJoueur == 0) indSec = 1;
+					int score1 = Integer.parseInt( recevoirMsg() );
+					int score2 = Integer.parseInt( recevoirMsg() );
+
+					joueurs[indJoueur].setScore( score1 );
+					joueurs[indSec].setScore( score2 );
 
                     // faut prendre le tableau de joueur de Serveur OU envoyer le score de serveur vers Client
                     if (joueurs[indJoueur].getScore() > joueurs[indSec].getScore())
-                        System.out.println("88 - Partie Terminée, Vous avez gagné " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
+                        System.out.println("88 - Partie Terminée, Vous avez gagné (Votre Score) " + joueurs[indJoueur].getScore() + " - (Score Adverse) " + joueurs[indSec].getScore());
                     else
-                        System.out.println("88 - Partie Terminée, Vous avez perdu " + joueurs[indJoueur].getScore() + " - " + joueurs[indSec].getScore());
+                        System.out.println("88 - Partie Terminée, Vous avez perdu (Votre Score) " + joueurs[indJoueur].getScore() + " - (Score Adverse) " + joueurs[indSec].getScore());
                 }
 
                 //On va pas l'implemtenter dans serveur car trop de chose a faire avant ça
@@ -112,6 +117,7 @@ public class Client
 					System.out.println("91 - demande non valide");
 				}
             }
+
 		}
 	}
 

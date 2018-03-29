@@ -109,6 +109,7 @@ public class Serveur
 							if (verifCoord(coordonnees) == 1  )
 							{
 								signalCoord(coordonnees);
+								envoyerScore();
 								majGrille(coordonnees);
 								joueurActif.setNbTwistLock( joueurActif.getNbTwistLock() -1);
 								break;
@@ -120,11 +121,12 @@ public class Serveur
 							}
 							if (verifCoord(coordonnees) == -1 )
 							{
-								signalErreur();
+								continue;
 							}
 						}
 						System.out.println("Joueur TwistLock :" + joueurActif.getNom() + "   " + joueurActif.getNbTwistLock());
 						changeJoueurActif();
+
 
 
 					}
@@ -134,6 +136,7 @@ public class Serveur
 
 			}
 			System.out.println("Fin Jeu");
+			envoyerScore();
 			System.out.println("Scoore " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
 			System.out.println("Scoore " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
 		} catch (IOException ioe) { ioe.printStackTrace(); }
@@ -204,6 +207,21 @@ public class Serveur
 		return c;
 	}
 
+	private void envoyerScore()
+	{
+		try{
+			for ( int i = 0; i < joueurs.length; i++)
+			{
+				String msgScore = "" + joueurs[i].getScore();
+				envoyerMsg(msgScore, tabClient[i]);
+				if ( i == 0) msgScore = "" + joueurs[1].getScore();
+				else         msgScore = "" + joueurs[0].getScore();
+				envoyerMsg(msgScore, tabClient[i]);
+
+			}
+		}catch (IOException ioe){}
+	}
+
 	private void signal01(String map)
 	{
 		try{
@@ -224,6 +242,8 @@ public class Serveur
 				signal = "88";
 				envoyerMsg(signal, tabClient[0]);
 				envoyerMsg(signal, tabClient[1]);
+
+
 				return true;
 			}
 		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 88");}
