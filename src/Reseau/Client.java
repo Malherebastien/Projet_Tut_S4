@@ -60,21 +60,50 @@ public class Client
 		{
             String signal = recevoirMsg();
 
-           	if (estEntier(signal))
+            System.out.println(signal);
+            if ( signal.substring(0,2).equals("01") )
+			{
+				String map = signal.substring(34);
+				initGrille(map);
+			}
+
+			if ( signal.substring(0,2).equals("10"))
+			{
+				Scanner sc = new Scanner(System.in);
+				envoyerMsg(sc.nextLine());
+			}
+
+			if ( signal.substring(0,2).equals("88") )
+			{
+				System.exit(0);
+			}
+
+			/*if ( signal.substring(0,2).equals("20"))
+			{
+				System.out.println("20");
+			}
+
+			if ( signal.substring(0,2).equals("88"))
+			{
+				System.out.println("88");
+
+			}*/
+           	/*if (estEntier(signal))
             {
-                int sig = Integer.parseInt(signal);
+                int sig = Integer.parseInt(signal); // faire avec des equals
 
                 if (sig == 1)
                 {
                     String map = recevoirMsg();
-                    System.out.println("01 - La partie va commencer\nMap = " + map);
-
-                    initGrille(map);
+                    //System.out.println("01 - La partie va commencer\nMap = " + map);
+					System.out.println(map);
+					initGrille(map);
                 }
 
                 if (sig == 10)
                 {
-                    System.out.print("10 - A vous de jouer (" + joueurs[indJoueur].getCouleur() + ") : ");
+                	System.out.println(sig);
+                    //System.out.print("10 - A vous de jouer (" + joueurs[indJoueur].getCouleur() + ") : ");
 
 					Scanner sc = new Scanner(System.in);
                     envoyerMsg(sc.nextLine());
@@ -84,13 +113,13 @@ public class Client
                 {
                     String donnees = recevoirMsg();
                     //Signal 22 sinon on va jamais avoir le signal 22, meme si le signal est 22
-					if (estEntier(donnees) && Integer.parseInt(donnees) == 22) System.out.println("22 - Coup adversaire illegal");
-					else { System.out.println("20 - Coup adversaire : " + donnees);	}
+					if (estEntier(donnees) && Integer.parseInt(donnees) == 22) //System.out.println("22 - Coup adversaire illegal");
+					else //{ System.out.println("20 - Coup adversaire : " + donnees);	}
                 }
 
-                if (sig == 21) System.out.println("21 - Coup illegal");
+                if (sig == 21) //System.out.println(sig);System.out.println("21 - Coup illegal");
 
-                if (sig == 50) System.out.println("50 - Vous ne pouvez plus jouer");
+                if (sig == 50) //System.out.println("50 - Vous ne pouvez plus jouer");
 
                 if (sig == 88)
                 {
@@ -103,20 +132,19 @@ public class Client
 					joueurs[indJoueur].setScore( score1 );
 					joueurs[indSec].setScore( score2 );
 
-                    // faut prendre le tableau de joueur de Serveur OU envoyer le score de serveur vers Client
                     if (joueurs[indJoueur].getScore() > joueurs[indSec].getScore())
                         System.out.println("88 - Partie Terminée, Vous avez gagné (Votre Score) " + joueurs[indJoueur].getScore() + " - (Score Adverse) " + joueurs[indSec].getScore());
                     else
                         System.out.println("88 - Partie Terminée, Vous avez perdu (Votre Score) " + joueurs[indJoueur].getScore() + " - (Score Adverse) " + joueurs[indSec].getScore());
                 }
 
-                //On va pas l'implemtenter dans serveur car trop de chose a faire avant ça
+                //On va pas l'implementer dans serveur car trop de chose a faire avant ça
 				//Cependant ce signal dit que le client de la demande est inconnu
-                if ( sig == 91 )
+                /*if ( sig == 91 )
 				{
 					System.out.println("91 - demande non valide");
-				}
-            }
+				}*/
+            //}
 
 		}
 	}

@@ -98,9 +98,6 @@ public class Serveur
 
 						while ( joueurPeutJouer )
 						{
-							//faire l'attente du client qui n'est pas le joueur courany
-							signal20();
-
 							//fait jouer le joueur courant
 							signal10();
 
@@ -108,8 +105,7 @@ public class Serveur
 							//test erreur coord
 							if (verifCoord(coordonnees) == 1  )
 							{
-								signalCoord(coordonnees);
-								envoyerScore();
+								signal20(coordonnees);
 								majGrille(coordonnees);
 								joueurActif.setNbTwistLock( joueurActif.getNbTwistLock() -1);
 								break;
@@ -127,8 +123,6 @@ public class Serveur
 						System.out.println("Joueur TwistLock :" + joueurActif.getNom() + "   " + joueurActif.getNbTwistLock());
 						changeJoueurActif();
 
-
-
 					}
 
 				}
@@ -136,7 +130,7 @@ public class Serveur
 
 			}
 			System.out.println("Fin Jeu");
-			envoyerScore();
+			//envoyerScore();
 			System.out.println("Scoore " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
 			System.out.println("Scoore " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
 		} catch (IOException ioe) { ioe.printStackTrace(); }
@@ -207,7 +201,7 @@ public class Serveur
 		return c;
 	}
 
-	private void envoyerScore()
+	/*private void envoyerScore()
 	{
 		try{
 			for ( int i = 0; i < joueurs.length; i++)
@@ -220,16 +214,15 @@ public class Serveur
 
 			}
 		}catch (IOException ioe){}
-	}
+	}*/
 
 	private void signal01(String map)
 	{
 		try{
 			for (int i = 0; i < joueurs.length; i++)
 			{
-				signal = "1";
+				signal = "01 - La partie va commencer\nMap = " + map;
 				envoyerMsg(signal, tabClient[i] );
-				envoyerMsg(map   , tabClient[i] );
 			}
 		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 01"); }
 	}
@@ -239,10 +232,20 @@ public class Serveur
 		try {
 			if (joueurs[0].getNbTwistLock() <= 0 && joueurs[1].getNbTwistLock() <= 0)
 			{
-				signal = "88";
-				envoyerMsg(signal, tabClient[0]);
-				envoyerMsg(signal, tabClient[1]);
-
+				if ( joueurs[0].getScore() > joueurs[1].getScore())
+				{
+					signal = "88 - Partie Terminée, Vous avez gagné " + joueurs[0].getScore() + " - egfddsdfx" + joueurs[1].getScore() + "!";
+					envoyerMsg(signal, tabClient[0]);
+					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[1].getScore() + " - tgdrfhgf" + joueurs[0].getScore() + "!";
+					envoyerMsg(signal, tabClient[1]);
+				}
+				else
+				{
+					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[0].getScore() + " - tgrhejdikfbsdwkx" + joueurs[1].getScore() ;
+					envoyerMsg(signal, tabClient[0]);
+					signal = "88 - Partie Terminée, Vous avez gagné " + joueurs[1].getScore() + " - drfdsrgdfs" + joueurs[0].getScore() ;
+					envoyerMsg(signal, tabClient[1]);
+				}
 
 				return true;
 			}
@@ -258,7 +261,7 @@ public class Serveur
 			{
 				if (getJoueurActif() == joueurs[i] && joueurs[i].getNbTwistLock() <= 0)
 				{
-					signal = "50";
+					signal = "50 - Vous ne pouvez plus jouer";
 					envoyerMsg(signal, tabClient[i]);
 					joueurPeutJouer = false;
 				}
@@ -267,13 +270,13 @@ public class Serveur
 		return joueurPeutJouer;
 	}
 
-	private void signal20()
+	private void signal20(String coord)
 	{
 		try {
 			// recois le joueur actif, et le joueur actif recois le message suivant
 			for ( int i = 0; i < joueurs.length; i++ )
 			{
-				if ( getJoueurActif() != joueurs[i]) { signal = "20"; envoyerMsg(signal, tabClient[i]); }
+				if ( getJoueurActif() != joueurs[i]) { signal = "20 - Coup adversaire : " + coord; envoyerMsg(signal, tabClient[i]); }
 			}
 		}catch (IOException ioe){ System.out.println("Erreur envoi Signal 20"); }
 
@@ -286,7 +289,7 @@ public class Serveur
 			{
 				if (getJoueurActif() == joueurs[i])
 				{
-					signal = "10"; //a vous de jouer
+					signal = "10 - A vous de jouer (" + joueurActif.getCouleur() + ") : "; //a vous de jouer
 					envoyerMsg(signal, tabClient[i]);
 				}
 			}
@@ -300,37 +303,22 @@ public class Serveur
 
 			if (getJoueurActif() == joueurs[0])
 			{
-				signal = "21";
+				signal = "21 - Coup illegal";
 				envoyerMsg(signal, tabClient[0]);
-				signal = "22";
+				signal = "22 - Coup adversaire illegal";
 				envoyerMsg(signal, tabClient[1]);
 			}
 			else
 			{
-				signal = "21";
+				signal = "21 - Coup illegal";
 				envoyerMsg(signal, tabClient[1]);
-				signal = "22";
+				signal = "22 - Coup adversaire illegal";
 				envoyerMsg(signal, tabClient[0]);
 			}
 
 
 		}catch (IOException ioe) { System.out.println("Erreur Signal Erreur"); }
 
-	}
-
-	private void signalCoord(String coordonnees)
-	{
-		try {
-			for ( int i = 0; i < joueurs.length; i++)
-			{
-				if ( getJoueurActif() != joueurs[i])
-				{
-					signal = coordonnees;
-					envoyerMsg(signal, tabClient[i]);
-				}
-			}
-
-		}catch (IOException ioe){ System.out.println("Erreur envoi Coord"); }
 	}
 
 	public Joueur getJoueurActif() { return joueurActif;}
