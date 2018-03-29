@@ -42,7 +42,7 @@ public class Serveur
 			//crée une Socket au port 2009
 			ds = new DatagramSocket(2009);
 
-			while (true)
+			while ( true )
 			{
 				if ( !partieCommencerBok )
 				{
@@ -131,8 +131,8 @@ public class Serveur
 			}
 			System.out.println("Fin Jeu");
 			//envoyerScore();
-			System.out.println("Scoore " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
-			System.out.println("Scoore " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
+			System.out.println("Score " + joueurs[0].getNom() + "\t" + joueurs[0].getScore());
+			System.out.println("Score " + joueurs[1].getNom() + "\t" + joueurs[1].getScore());
 		} catch (IOException ioe) { ioe.printStackTrace(); }
 	}
 
@@ -234,18 +234,22 @@ public class Serveur
 			{
 				if ( joueurs[0].getScore() > joueurs[1].getScore())
 				{
-					signal = "88 - Partie Terminée, Vous avez gagne " + joueurs[0].getScore() + " - " + joueurs[1].getScore() ;
+					signal = "88 - Partie Terminée, Vous avez gagne " + joueurs[0].getScore() + " - " + joueurs[1].getScore() + "!" ;
 					envoyerMsg(signal, tabClient[0]);
-					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[1].getScore() + " - " + joueurs[0].getScore() ;
+					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[1].getScore() + " - " + joueurs[0].getScore() + "!" ;
 					envoyerMsg(signal, tabClient[1]);
 				}
 				else
 				{
-					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[0].getScore() + " - " + joueurs[1].getScore() ;
+					signal = "88 - Partie Terminée, Vous avez perdu " + joueurs[0].getScore() + " - " + joueurs[1].getScore() + "!" ;
 					envoyerMsg(signal, tabClient[0]);
-					signal = "88 - Partie Terminée, Vous avez gagne " + joueurs[1].getScore() + " - " + joueurs[0].getScore() ;
+					signal = "88 - Partie Terminée, Vous avez gagne " + joueurs[1].getScore() + " - " + joueurs[0].getScore() + "!" ;
 					envoyerMsg(signal, tabClient[1]);
 				}
+
+				String carte = afficherGrille();
+				envoyerMsg(carte , tabClient[0]);
+				envoyerMsg(carte , tabClient[1]);
 
 				return true;
 			}
@@ -289,12 +293,9 @@ public class Serveur
 			{
 				if (getJoueurActif() == joueurs[i])
 				{
-					signal = "10 - A vous de jouer (" + joueurActif.getCouleur() + ") : \n" + afficherGrille(); //a vous de jouer
+					// je met un \n en dehors de la chaine car c'est pour eviter de probleme pour client
+					signal = "10 - A vous de jouer (" + joueurActif.getCouleur() + ") : \n" + afficherGrille() ; //a vous de jouer
 					envoyerMsg(signal, tabClient[i]);
-					//String carte = "MAP:\n" + afficherGrille();
-					//if ( joueurActif == joueurs[0])envoyerMsg(carte,tabClient[0]);
-					//else envoyerMsg( carte, tabClient[1]);
-
 				}
 			}
 
@@ -436,6 +437,7 @@ public class Serveur
 	private void envoyerMsg(String msg, DatagramPacket dpReceveurMessage) throws IOException
 	{
 		DatagramPacket reponse = new DatagramPacket(msg.getBytes(), msg.length(), dpReceveurMessage.getAddress(), dpReceveurMessage.getPort());
+		System.out.println(new String(reponse.getData()));
 		ds.send(reponse);
 	}
 
