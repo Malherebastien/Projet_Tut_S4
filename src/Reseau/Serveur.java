@@ -106,17 +106,9 @@ public class Serveur
 
 							String coordonnees = recevoirMsg(); System.out.println(coordonnees);
 							//test erreur coord
-							if (!verifCoord(coordonnees))
-							{
-								signalErreur();
-							}
-							else
-							{
-								//envoie resultat du joueur courant
-								signalCoord(coordonnees);
-								break; // pour sortir de boucle
-							}
-
+							if (verifCoord(coordonnees) == 1 ) { signalCoord(coordonnees); majGrille(coordonnees); break; }
+							if (verifCoord(coordonnees) == -1) continue;
+							if (verifCoord(coordonnees) == 0 ) signalErreur();
 						}
 						changeJoueurActif();
 
@@ -128,6 +120,32 @@ public class Serveur
 			}
 			System.out.println("Fin Jeu");
 		} catch (IOException ioe) { ioe.printStackTrace(); }
+	}
+
+	private void majGrille(String valPos)
+	{
+		int coin = Integer.parseInt(valPos.substring(valPos.length()-1, valPos.length()));
+
+		String coord = valPos.substring(0,valPos.length()-1);
+
+		int lig = Integer.parseInt(valPos.substring(0, coord.length()-1));
+		int col = Character.toUpperCase(coord.charAt(coord.length()-1))-65;
+
+		if (!tabContainer[lig-1][col].getCoins()[coin-1].isOccupe())
+		{
+			this.tabContainer[lig-1][col].getCoins()[coin-1].setOccupant(joueurActif);
+			// -64 pour les lettres et -1 pour le tableau
+
+			// Parcours des joueurs pour remettres leurs points à 0 avant de fair eune nouvelle affectation
+			for (int i = 0; i < joueurs.length ; i++)
+				joueurs[i].setScore(0);
+
+			// Parcours des containers pour mettre les points aux joueurs
+			for (int i = 0; i < nbLigne ; i++)
+				for (int j = 0; j < nbCol ; j++)
+					this.tabContainer[i][j].setScoreJoueur();
+		}
+		else if (this.joueurActif.getNbTwistLock() != 0) this.joueurActif.setNbTwistLock(this.joueurActif.getNbTwistLock() - 1);
 	}
 
 	private void initGrille(String map)
@@ -310,24 +328,31 @@ public class Serveur
 		return map;
 	}
 
-	private boolean verifCoord(String coord)
+	/**
+	 * Permet de savoir si les coordonnées sont valides
+	 * @param coord
+	 * @return -1 si coordonnées non valides, 0 si coordonnées valides mais emplacement déjà occupé, 1 si out est bon
+	 */
+	private int verifCoord(String coord)
 	{
 		try
 		{
 			if (coord.length() == 3) {
-				int lig = Integer.parseInt(coord.charAt(0)+""); System.out.println("Parsing ligne OK");
-				int col = Character.toUpperCase(coord.charAt(1)) - 65; System.out.println("Parsing colonne OK");
-				int coin = Integer.parseInt(coord.charAt(2)+""); System.out.println("Parsing coin OK");
+				int lig  = Integer.parseInt(coord.charAt(0)+"");
+				int col  = Character.toUpperCase(coord.charAt(1)) - 65;
+				int coin = Integer.parseInt(coord.charAt(2)+"");
 
-				System.out.println("Parsing OK");
-
-				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0 && coin >= 1 || coin <= 4) return true;
+				if (lig <= nbLigne && lig >= 0 && col <= nbCol && col >= 0 && coin >= 1 || coin <= 4)
+				{
+					if (tabContainer[lig][col].getCoins()[coin].isOccupe()) return 0;
+					else                                                    return 1;
+				}
 			}
 		}catch (Exception e){ System.out.println("Erreur parsing"); }
 
 		System.out.println("FAUX");
 
-		return false;
+		return -1;
 	}
 
 	private void envoyerMsg(String msg, DatagramPacket dpReceveurMessage) throws IOException
